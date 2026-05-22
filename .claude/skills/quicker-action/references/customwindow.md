@@ -64,6 +64,21 @@ cscode 只支持以下三个回调，不存在 `OnWindowClosing`、`OnWindowClos
 
 cscode 使用 **C# 5.0**，不能写 `$""` 插值、`?.`、表达式体成员等。
 
+### ICustomWindowContext 接口
+
+```csharp
+// Quicker.Public.ICustomWindowContext
+public interface ICustomWindowContext
+{
+    Task<IDictionary<string, object>> RunSpAsync(string spName, IDictionary<string, object> inputParams);
+    Task<IDictionary<string, object>> RunSpAsync(string spName, object inputParams);
+    IDictionary<string, object> RunSp(string spName, IDictionary<string, object> inputParams);
+    IDictionary<string, object> RunSp(string spName, object inputParams);
+}
+```
+
+只有这 4 个方法，没有 `Close` 等其他方法。
+
 ```csharp
 using System.Windows;
 using System.Collections.Generic;
