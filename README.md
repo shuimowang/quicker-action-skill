@@ -39,15 +39,19 @@ Claude 会：
 ## 项目结构
 
 ```
-.claude/skills/quicker-action/
-├── SKILL.md                      # 入口（生成规则、优先级、界面选型）
-└── references/
-    ├── json-structure.md         # JSON 结构、Variables、VarType、步骤
-    ├── modules.md                # 模块定义（assign/csscript/pythonscript 等）
-    ├── form.md                   # 多字段表单 sys:form（字段类型、自动计算）
-    ├── customwindow.md           # 自定义窗口 XAML、回调、进阶用法
-    ├── csharp-rules.md           # C# 命名空间冲突、IStepContext、线程选择
-    └── checklist.md              # 生成后自检清单
+quicker-action-skill/
+├── .claude/skills/quicker-action/
+│   ├── SKILL.md                  # 入口（生成规则、优先级、界面选型）
+│   └── references/
+│       ├── json-structure.md     # JSON 结构、Variables、VarType、步骤
+│       ├── modules.md            # 模块定义（assign/csscript/pythonscript 等）
+│       ├── form.md               # 多字段表单 sys:form（字段类型、设置窗口）
+│       ├── customwindow.md       # 自定义窗口 XAML、回调、进阶用法
+│       ├── csharp-rules.md       # C# 命名空间冲突、IStepContext、线程选择
+│       └── checklist.md          # 生成后自检清单
+├── examples/
+│   └── demo-text-toolbox.json    # 示例动作：文本工具箱
+└── README.md
 ```
 
 ## 功能
