@@ -332,6 +332,9 @@ window.Dispatcher.Invoke(() => {
 
 ## 最简示例（输入框+确定按钮）
 
+> 注意：此示例使用 `qk:Att.Action="close:ok"` 关闭窗口（旧写法）。
+> 推荐方式是在 cscode 中用 `win.Close()` 关闭，见上方"按钮关闭窗口"。
+
 XAML 内容（`windowMarkup` 的 Value）：
 
 ```xml
