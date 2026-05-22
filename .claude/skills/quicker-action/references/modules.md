@@ -214,7 +214,12 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 
 ## 表达式语法
 
-表达式以 `$=` 开头，支持两种形式：
+表达式以 `$=` 开头，**可在任何步骤的 Value 字段中使用**，不限于赋值步骤。
+
+常见用法：
+- `sys:assign` 的 `input` 参数 — 计算并赋值
+- `sys:simpleIf` 的 `condition` 参数 — 条件判断
+- 任何步骤的参数 — 动态计算值
 
 ### 简单表达式
 相当于 C# 赋值语句等号后面的部分：
@@ -233,6 +238,22 @@ if ({number1} > {number2})
     return "较大值为number2:" + {number2};
 }
 ```
+
+### 在 simpleIf 条件中使用多行表达式
+
+```json
+{
+  "StepRunnerKey": "sys:simpleIf",
+  "InputParams": {
+    "condition": {
+      "VarKey": null,
+      "Value": "$=\r\n\r\nint number = new Random().Next(1, 11);\r\n\r\nreturn number % 2 == 0;"
+    }
+  }
+}
+```
+
+表达式可以声明变量、调用方法，只要最终 `return` 一个 bool 结果即可。
 
 ### 变量引用
 使用花括号：`{变量名}`
