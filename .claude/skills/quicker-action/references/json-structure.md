@@ -48,6 +48,8 @@
 
 ## Data（JSON 字符串）
 
+对应类型：`Quicker.Domain.Actions.X.XAction`
+
 ```json
 {
   "LimitSingleInstance": false,  // 始终设为 false，多实例处理在步骤中实现
@@ -56,6 +58,16 @@
   "Variables": [],
   "Steps": []
 }
+```
+
+**字段定义：**
+
+```csharp
+// Quicker.Domain.Actions.X.XAction
+IList<SubProgram> SubPrograms;       // 子程序列表
+IList<ActionVariable> Variables;     // 动作变量列表
+IList<ActionStep> Steps;             // 步骤列表
+bool LimitSingleInstance;            // 是否限制单实例
 ```
 
 ### LimitSingleInstance（限制单实例）
