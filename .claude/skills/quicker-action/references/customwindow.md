@@ -163,6 +163,60 @@ AppHelper.ShowWarning("警告消息");
 AppHelper.ShowError("错误消息", false); // 第二个参数 false 避免阻塞
 ```
 
+### WebView2 控件
+
+嵌入浏览器渲染 HTML/JS，需引用：
+
+```csharp
+using Microsoft.Web.WebView2.Wpf;  // WebView2 控件
+using Microsoft.Web.WebView2.Core;  // CoreWebView2
+using System.IO;                     // Path
+```
+
+XAML：
+
+```xml
+<Window xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf">
+  <wv2:WebView2 x:Name="webView" />
+</Window>
+```
+
+初始化 boilerplate：
+
+```csharp
+public static WebView2 webView;
+
+webView = win.FindName("webView") as WebView2;
+
+win.SourceInitialized += async (sender, e) =>
+{
+    // 指定数据目录，防止默认路径权限问题
+    var folder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        "Quicker", "WebView2");
+    var env = await CoreWebView2Environment.CreateAsync(null, folder).ConfigureAwait(true);
+
+    webView.CoreWebView2InitializationCompleted += (s, args) =>
+    {
+        if (args.IsSuccess)
+        {
+            webView.CoreWebView2.Navigate("https://example.com/");
+        }
+        else
+        {
+            AppHelper.ShowError("WebView2 初始化失败:" + args.InitializationException.Message, false);
+        }
+    };
+
+    await webView.EnsureCoreWebView2Async(env).ConfigureAwait(true);
+};
+
+win.Closed += (sender, e) =>
+{
+    if (webView != null) webView.Dispose();
+};
+```
+
 ### 获取网站 Favicon
 
 ```
