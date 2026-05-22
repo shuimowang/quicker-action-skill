@@ -15,6 +15,94 @@ public static string Exec(Quicker.Public.IStepContext context)
 public static void Exec(Quicker.Public.IStepContext context) { }
 ```
 
+## 内置变量（`_context`、`_eval`、`_qk`）
+
+表达式和 C# 步骤中可直接使用三个内置变量。
+
+### `_eval`（表达式引擎）
+
+类型：`Z.Expressions.EvalContext`，承载动作代码的执行环境。
+
+```csharp
+// 注册自定义 DLL，后续步骤即可使用其中的类型
+_eval.RegisterAssembly(typeof(MyClass).Assembly);
+
+// 注册全局变量
+_eval.RegisterGlobalVariable("myVar", value);
+
+// 添加自定义方法
+_eval.AddMethod("MyMethod", (Func<int, int, int>)((a, b) => a + b));
+```
+
+`C:\Program Files\Quicker\` 下的 DLL（Newtonsoft.Json、NAudio、HtmlAgilityPack 等）已内置可用，**不需要注册**。
+
+### `_context`（动作执行上下文）
+
+类型：`Quicker.Domain.Actions.ActionExecuteContext`，是 `IActionContext` 的完整实现。
+
+**常用属性：**
+
+| 属性 | 说明 |
+|------|------|
+| `ActionId` | 当前动作 ID（常用作窗口标识 `$=_context.ActionId`） |
+| `ActionTitle` | 当前动作标题 |
+| `InputParam` | 右键菜单/外部调用传入的参数 |
+| `ParentWindow` | 父窗口引用 |
+| `ActiveWindowHwnd` | 当前活动窗口句柄 |
+| `IsRootContext` | 是否为主程序上下文 |
+| `RootContext` | 主程序上下文 |
+| `ParentContext` | 直接调用者上下文 |
+
+**存储机制：**
+
+| 机制 | 方法 | 类型 | 生命周期 | 说明 |
+|------|------|------|----------|------|
+| 变量 | `GetVarValue` / `SetVarValue` | 任意 | 动作运行期间 | 最临时 |
+| 缓存 | `ReadCache<T>` / `WriteCache` | 泛型 T | Quicker 进程存活期间 | 支持任意类型，进程退出丢失 |
+| 状态 | `ReadState` / `WriteState` | string | 永久（写文件，有防抖） | 复杂数据需序列化为 JSON |
+
+```csharp
+// 变量
+_context.SetVarValue("name", "value");
+var name = _context.GetVarValue("name") as string;
+
+// 缓存（支持泛型，进程级）
+_context.WriteCache("data", myObject, 3600);  // 保留 1 小时
+var data = _context.ReadCache<MyType>("data", null);
+
+// 状态（永久，写文件，带防抖）
+_context.WriteState("config_json", json);
+var json = _context.ReadState("config_json", "{}");
+```
+
+**上下文层级：**
+
+主程序和子程序各有独立的 `_context` 实例，形成父子链：
+
+```
+主程序 _context
+  └─ 子程序 A: GetParentContext() → 主程序, GetRootContext() → 主程序
+       └─ 子程序 B: GetParentContext() → A, GetRootContext() → 主程序
+```
+
+- `GetRootContext()` 始终返回最顶层主程序的 `_context`
+- `GetParentContext()` 返回直接调用者的 `_context`
+
+**其他常用方法：**
+
+| 方法 | 说明 |
+|------|------|
+| `EvalExpression(expr, onUiThread)` | 求值表达式，`onUiThread=true` 在 UI 线程执行 |
+| `RunSp` / `RunSpAsync` | 调用子程序（同步/异步） |
+| `TryGetValue(var, default)` | 读变量，不存在返回默认值 |
+| `IsVarExists(varName)` | 检查变量是否存在 |
+| `UpdateVariablesFromDict` / `FromJson` | 批量更新变量 |
+| `RegisterDisposable(obj)` | 注册 IDisposable，动作结束自动释放 |
+
+### `_qk`
+
+内部功能封装，方法不常用，一般不需要关注。
+
 ## IStepContext 完整方法列表
 
 | 方法 | 说明 |

@@ -260,9 +260,12 @@ if ({number1} > {number2})
 使用花括号：`{变量名}`
 
 ### 内置对象
-- `_context` — 动作上下文，可调用 `GetVarValue`/`SetVarValue`/`RunSp` 等
-- `_qk` — 内置功能封装
-- `_eval` — 表达式引擎，可注册方法 `_eval.AddMethod(code)`、注册变量 `_eval.RegisterGlobalVariable(name, value)`
+
+表达式和 C# 步骤中可直接使用，详细说明见 [C# 规则 - 内置变量](csharp-rules.md#内置变量_context_eval_qk)。
+
+- `_context` — 动作上下文（`ActionExecuteContext`），可调用 `GetVarValue`/`SetVarValue`/`RunSp`/`WriteState`/`ReadCache` 等
+- `_eval` — 表达式引擎（`EvalContext`），可注册自定义 DLL（`_eval.RegisterAssembly`）、注册方法、注册变量
+- `_qk` — 内置功能封装，不常用
 
 ### 已注册类型（常用，可在表达式中直接使用）
 
