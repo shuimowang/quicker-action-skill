@@ -83,19 +83,6 @@ public interface IActionContext
 }
 ```
 
-**ActionExecuteContext 额外属性（`_context` 可直接访问）：**
-
-| 属性 | 说明 |
-|------|------|
-| `ActionId` | 当前动作 ID（常用作窗口标识 `$=_context.ActionId`） |
-| `InputParam` | 右键菜单/外部调用传入的参数 |
-| `ParentWindow` | 父窗口引用 |
-| `ActiveWindowHwnd` | 当前活动窗口句柄 |
-| `RootContext` | 主程序上下文 |
-| `ParentContext` | 直接调用者上下文 |
-| `TextData` | 文本数据 |
-| `ImageData` | 图片数据 |
-
 **存储机制：**
 
 | 机制 | 方法 | 类型 | 生命周期 | 说明 |
@@ -132,18 +119,18 @@ var json = _context.ReadState("config_json", "{}");
 
 内部功能封装，方法不常用，一般不需要关注。
 
-## IStepContext 完整方法列表
+## IStepContext 接口
 
-| 方法 | 说明 |
-|------|------|
-| `GetVarValue(string varName)` | 读取动作变量 |
-| `SetVarValue(string varName, object value)` | 写入动作变量 |
-| `EvalExpression(string expression, bool onUiThread)` | 求值 Quicker 表达式 |
-| `RunSp(string spName, IDictionary<string, object> input)` | 调用子程序 |
-| `ReadState(string key, string defaultValue)` | 读取持久状态（跨次运行） |
-| `WriteState(string key, string value)` | 写入持久状态 |
-| `ReadCache<T>(string key, T defaultValue)` | 读取缓存 |
-| `WriteCache(string key, object value, int maxKeepSeconds)` | 写入缓存（带过期时间） |
+C# 脚本步骤的 `context` 参数类型。`IStepContext` 继承 `IActionContext`，拥有 `IActionContext` 的全部方法。
+
+```csharp
+// Quicker.Public.Interfaces.IStepContext
+public interface IStepContext : IActionContext
+{
+    // 继承 IActionContext 的所有方法（见上方 _context 章节）
+    // IStepContext 本身无额外方法
+}
+```
 
 ### 状态存取示例
 
