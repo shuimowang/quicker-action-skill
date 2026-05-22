@@ -4,12 +4,19 @@
 
 ```json
 {
-  "Row": 0, "Col": 0, "ActionType": 24,
-  "Title": "动作名称", "Description": "描述",
-  "Icon": "fa:Solid_Star", "Path": null, "DelayMs": 0,
+  "Row": 0,
+  "Col": 0,
+  "ActionType": 24,
+  "Title": "动作名称",
+  "Description": "描述",
+  "Icon": "fa:Solid_Star",
+  "Path": null,
+  "DelayMs": 0,
   "Data": "{...JSON字符串...}",
   "Id": "GUID",
-  "AsSubProgram": false, "AllowScrollTrigger": false, "EnableEvaluateVariable": true
+  "AsSubProgram": false,
+  "AllowScrollTrigger": false,
+  "EnableEvaluateVariable": true
 }
 ```
 
@@ -28,12 +35,14 @@
 ## 图标（Icon 字段）
 
 **动作 Icon 字段**（不带 `[]`）：
+
 ```
 fa:Solid_Trash          # 矢量图标，系统颜色
 fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
 ```
 
 **菜单/标题内联标记**（带 `[]`）：
+
 ```
 [fa:Solid_Trash]              # 矢量图标
 [fa:Solid_Pen:#FF0000]        # 自定义颜色
@@ -41,7 +50,10 @@ fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
 [icon:.txt]                   # Windows 系统图标
 ```
 
-**Font Awesome 图标库：** 内置 7000+ 图标，4 种风格：`Solid`、`Regular`、`Light`、`Brands`。格式为 `风格_名称`。搜索：https://fontawesome.com/icons
+**Font Awesome 图标库：** 内置 7000+ 图标，4 种风格：
+`Solid`、`Regular`、`Light`、`Brands`。格式为 `风格_名称`。
+
+搜索：https://fontawesome.com/icons
 
 **图标名获取：** 面板腰栏 → 工具 → 图标库，选择后自动复制名称。
 
@@ -50,6 +62,7 @@ fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
 ## 子程序（SubPrograms 字段）
 
 子程序定义在 `SubPrograms` 数组中，变量用 `IsInput`/`IsOutput` 标记输入输出。
+
 ```json
 {
   "Id": "GUID",
@@ -63,17 +76,39 @@ fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
   "ShareTimeUtc": null,
   "UseServerVersion": null,
   "Variables": [
-    {"Key": "inputVar", "Type": 0, "Desc": "输入", "IsInput": true, "IsOutput": false, "ParamName": "inputVar", ...},
-    {"Key": "outputVar", "Type": 0, "Desc": "输出", "IsInput": false, "IsOutput": true, "ParamName": "outputVar", ...}
+    {
+      "Key": "inputVar", "Type": 0, "Desc": "输入",
+      "IsInput": true, "IsOutput": false, "ParamName": "inputVar"
+    },
+    {
+      "Key": "outputVar", "Type": 0, "Desc": "输出",
+      "IsInput": false, "IsOutput": true, "ParamName": "outputVar"
+    }
   ],
   "Steps": []
 }
 ```
 
-在 cscode 中调用子程序：
+### 在 CustomWindow cscode 中调用子程序
+
+CustomWindow 的 cscode 使用 C# 5.0，**不能写 await**，使用同步的 `RunSp`：
+
 ```csharp
-var input = new Dictionary<string, object> { {"paramName", value} };
-var output = await winContext.RunSpAsync("子程序名", input);
+var input = new Dictionary<string, object>();
+input["paramName"] = value;
+var output = winContext.RunSp("子程序名", input);
+var result = output["outputVar"];
+```
+
+### 在 C# 脚本步骤中调用子程序
+
+使用 `IStepContext.RunSp`：
+
+```csharp
+var input = new Dictionary<string, object>();
+input["input1"] = "abc";
+input["input2"] = 123;
+var output = context.RunSp("子程序名", input);
 var result = output["outputVar"];
 ```
 
@@ -81,12 +116,20 @@ var result = output["outputVar"];
 
 ```json
 {
-  "Key": "变量名", "IsLocked": false,
-  "Type": 0,        // 见下方 VarType 枚举
-  "Desc": "", "DefaultValue": "",
-  "SaveState": false, "IsInput": false, "IsOutput": false,
-  "ParamName": "", "InputParamInfo": null, "OutputParamInfo": null,
-  "TableDef": null, "CustomType": null, "Group": ""
+  "Key": "变量名",
+  "IsLocked": false,
+  "Type": 0,
+  "Desc": "",
+  "DefaultValue": "",
+  "SaveState": false,
+  "IsInput": false,
+  "IsOutput": false,
+  "ParamName": "",
+  "InputParamInfo": null,
+  "OutputParamInfo": null,
+  "TableDef": null,
+  "CustomType": null,
+  "Group": ""
 }
 ```
 
@@ -114,10 +157,18 @@ var result = output["outputVar"];
 ```json
 {
   "StepRunnerKey": "模块类型",
-  "InputParams": { "参数名": {"VarKey": null, "Value": "固定值"} },
-  "OutputParams": { "输出名": "目标变量名" },
-  "IfSteps": [], "ElseSteps": [],
-  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+  "InputParams": {
+    "参数名": {"VarKey": null, "Value": "固定值"}
+  },
+  "OutputParams": {
+    "输出名": "目标变量名"
+  },
+  "IfSteps": [],
+  "ElseSteps": [],
+  "Note": "",
+  "Disabled": false,
+  "Collapsed": false,
+  "DelayMs": 0
 }
 ```
 

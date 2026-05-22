@@ -2,15 +2,25 @@
 
 Claude Code 自定义 Skill，用于生成 [Quicker](https://getquicker.net/) 组合动作的 JSON 文件。
 
-> **说明：** 这是一个 Claude Code Skill（`.claude/skills/quicker-action/`），安装后 Claude Code 会自动加载，无需手动调用。用户直接描述需求即可。
+> **说明：** 这是一个 Claude Code Skill（`.claude/skills/quicker-action/`），
+> 安装后 Claude Code 会自动加载，无需手动调用。用户直接描述需求即可。
 
 ## 安装
 
-将 `.claude/skills/quicker-action/` 目录复制到你的项目的 `.claude/skills/` 下：
+将 `.claude/skills/quicker-action/` 目录复制到你的项目下：
+
+**PowerShell（Windows）：**
+
+```powershell
+New-Item -ItemType Directory -Force .claude\skills
+Copy-Item -Recurse D:\path\to\quicker-action-skill\.claude\skills\quicker-action .claude\skills\
+```
+
+**Bash：**
 
 ```bash
 mkdir -p .claude/skills
-cp -r .claude/skills/quicker-action /你的项目/.claude/skills/
+cp -r /path/to/quicker-action-skill/.claude/skills/quicker-action .claude/skills/
 ```
 
 ## 使用
@@ -30,7 +40,7 @@ Claude 会：
 
 ```
 .claude/skills/quicker-action/
-├── SKILL.md                      # 入口文件（生成规则、优先级、界面选型）
+├── SKILL.md                      # 入口（生成规则、优先级、界面选型）
 └── references/
     ├── json-structure.md         # JSON 结构、Variables、VarType、步骤
     ├── modules.md                # 模块定义（assign/csscript/pythonscript 等）

@@ -1,3 +1,8 @@
+---
+name: quicker-action
+description: Generate Quicker action JSON files for Claude Code, including Quicker step modules, variables, subprograms, C# scripts, Python scripts, forms, custom panels, and CustomWindow XAML/C#.
+---
+
 # Quicker 动作生成器
 
 根据用户的需求，生成 Quicker 组合动作的 JSON 文件。
@@ -30,7 +35,8 @@
 5. **步骤组 / 子程序**（复杂流程拆分）
 6. **C# 脚本 `sys:csscript`**（兜底方案，不是默认方案）
 
-**判断标准：** 如果用内置步骤 + 表达式就能实现，就不要写 C# 脚本。只有当内置步骤明显不够用（需要复杂对象构建、内部服务调用、多步逻辑组合等）时才用脚本。
+**判断标准：** 如果用内置步骤 + 表达式就能实现，就不要写 C# 脚本。
+只有当内置步骤明显不够用（需要复杂对象构建、内部服务调用、多步逻辑组合等）时才用脚本。
 
 ## 界面选型规则
 
