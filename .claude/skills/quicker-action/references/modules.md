@@ -214,12 +214,13 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 
 ## 表达式语法
 
-表达式以 `$=` 开头，**可在任何步骤的 Value 字段中使用**，不限于赋值步骤。
+表达式以 `$=` 开头，**任何步骤 InputParams 的 Value 字段都能用**，不限于赋值步骤。
 
 常见用法：
-- `sys:assign` 的 `input` 参数 — 计算并赋值
-- `sys:simpleIf` 的 `condition` 参数 — 条件判断
-- 任何步骤的参数 — 动态计算值
+- `sys:assign` 的 `input` — 计算并赋值
+- `sys:simpleIf` 的 `condition` — 条件判断
+- `sys:csscript` 的 `script` — 动态生成代码
+- 其他步骤参数 — 动态计算任意值
 
 ### 简单表达式
 相当于 C# 赋值语句等号后面的部分：
