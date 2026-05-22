@@ -234,3 +234,40 @@ $= _context.GetRootContext().GetVarValue("变量名")
 | `Alt+S` | 保存 |
 | `Alt+C` / `Esc` | 取消 |
 | `Alt+R` | 重置表单内容 |
+
+## 常见用法：设置窗口
+
+`sys:form` 最常见的用途是作为动作的**设置窗口**，配合变量的 `SaveState` 实现跨次运行的配置持久化。
+
+### 模式
+
+1. 定义变量，设置 `DefaultValue`（默认值）和 `SaveState: true`
+2. 用 `sys:form`（编辑动作变量模式）让用户修改这些变量
+3. 用户保存后，变量值写回
+4. 动作正常结束时，Quicker 自动将 SaveState 变量的值持久化
+5. 下次运行时，自动读取上次保存的值
+
+### 变量状态的 Key 格式
+
+SaveState 变量在状态存储中的 key 为 `$var:变量名`。
+
+也可以在 C# 脚本中通过 `context.ReadState("$var:变量名", "")` 手动读取。
+
+### 注意事项
+
+- **只有动作正常结束后才会写入状态**，长期运行的动作或异常退出不会保存
+- 不适合需要实时持久化的场景（这种情况用 `context.WriteState` 手动写入）
+- DefaultValue 支持表达式，但一般不要引用其他变量（顺序问题）
+
+### 示例：翻译动作设置
+
+变量定义：
+```json
+[
+  {"Key": "srcLang", "Type": 0, "Desc": "源语言", "DefaultValue": "Auto", "SaveState": true},
+  {"Key": "dstLang", "Type": 0, "Desc": "目标语言", "DefaultValue": "zh", "SaveState": true},
+  {"Key": "vendor", "Type": 0, "Desc": "翻译引擎", "DefaultValue": "Baidu", "SaveState": true}
+]
+```
+
+设置步骤（`sys:form` 编辑变量模式）：用户打开表单修改语言和引擎，保存后变量更新，动作结束自动持久化。
