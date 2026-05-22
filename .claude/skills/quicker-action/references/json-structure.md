@@ -50,7 +50,7 @@
 
 ```json
 {
-  "LimitSingleInstance": false,
+  "LimitSingleInstance": false,  // 始终设为 false，多实例处理在步骤中实现
   "SummaryExpression": "$$",
   "SubPrograms": [],
   "Variables": [],

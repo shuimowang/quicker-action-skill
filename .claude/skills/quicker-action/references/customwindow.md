@@ -60,6 +60,8 @@ operation=open&data=https://example.com  # 打开网址
 
 ## 辅助 C# 回调
 
+cscode 只支持以下三个回调，不存在 `OnWindowClosing`、`OnWindowClosed` 等其他回调。
+
 cscode 使用 **C# 5.0**，不能写 `$""` 插值、`?.`、表达式体成员等。
 
 ```csharp
@@ -94,7 +96,16 @@ public static bool OnButtonClicked(
 
 **按钮触发回调（不关闭窗口）：** 用 `Tag="xxx"`，在 OnButtonClicked 中检查 `controlTag`，返回 `true` 保持窗口。
 
-**按钮关闭窗口：** 用 `qk:Att.Action="close:返回值"`
+**按钮关闭窗口：** 在 OnButtonClicked 中用 `win.Close()`，不要使用 `qk:Att.Action`。
+
+```csharp
+// XAML: <Button x:Name="btnClose" Content="关闭" Tag="Close"/>
+if (controlName == "btnClose")
+{
+    win.Close();
+    return false;
+}
+```
 
 ## 进阶用法
 
@@ -146,10 +157,11 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 例如：`https://helperservice.getquicker.cn/favicon/get/getquicker.net`，
 返回图片。可在 `qk:IconControl` 或 `<Image>` 中直接使用。
 
-## 单实例窗口（防止重复打开）
+## 多实例处理
 
-cscode 中有静态字段时，多次触发动作会产生多个窗口。
-在自定义窗口步骤前检测已有窗口，根据不同需求选择策略。
+**动作默认设置 `LimitSingleInstance=false`。**
+
+**使用 `sys:customwindow` 必须处理多实例。** 在 `ShowAndWaitClose` 步骤前，先用 `GetWindows` + `simpleIf` 检测已有窗口。
 
 窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
 如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
@@ -157,10 +169,22 @@ cscode 中有静态字段时，多次触发动作会产生多个窗口。
 ```
 步骤1: GetWindows → windowList
 步骤2: If windowList.Any() → 执行策略
-步骤3: ShowAndWaitClose → 显示新窗口（仅关闭/停止策略不需要此步）
+步骤3: ShowAndWaitClose → 显示新窗口（仅停止策略不需要此步）
 ```
 
-### 策略一：关闭旧窗口，打开新窗口
+### 策略选择（按优先级）
+
+| 优先级 | 做法 | 说明 |
+|--------|------|------|
+| 1 | `sys:stop` 停止动作，沿用旧窗口 | 最简单，旧窗口继续运行 |
+| 2 | 关闭旧窗口，停止动作 | 需要刷新窗口内容 |
+| 3 | 激活旧窗口，停止新实例 | 需要保留旧窗口状态 |
+
+### 策略一：停止动作（推荐）
+
+步骤2 IfSteps 中放 `sys:stop`，无需步骤3。
+
+### 策略二：关闭旧窗口，停止动作
 
 ```json
 // 步骤1: 获取窗口列表
@@ -177,31 +201,37 @@ cscode 中有静态字段时，多次触发动作会产生多个窗口。
     "errMessage": null
   }
 }
-// 步骤2: 关闭已有窗口
+// 步骤2: 关闭已有窗口并停止
 {
   "StepRunnerKey": "sys:simpleIf",
   "InputParams": {
     "condition": {"VarKey": null, "Value": "$={windowList}.Any()"}
   },
-  "IfSteps": [{
-    "StepRunnerKey": "sys:assign",
-    "InputParams": {
-      "input": {"VarKey": null, "Value": "$=\r\nSystem.Windows.Window window = {windowList}[0];\r\nwindow.Dispatcher.Invoke(() => { window.Close(); });"},
-      "stopIfFail": {"VarKey": null, "Value": "1"}
+  "IfSteps": [
+    {
+      "StepRunnerKey": "sys:assign",
+      "InputParams": {
+        "input": {"VarKey": null, "Value": "$=\r\nSystem.Windows.Window window = {windowList}[0];\r\nwindow.Dispatcher.Invoke(() => { window.Close(); });"},
+        "stopIfFail": {"VarKey": null, "Value": "1"}
+      },
+      "OutputParams": {"isSuccess": null, "output": null, "errMessage": null}
     },
-    "OutputParams": {"isSuccess": null, "output": null, "errMessage": null}
-  }]
+    {
+      "StepRunnerKey": "sys:stop",
+      "InputParams": {
+        "returnType": {"VarKey": null, "Value": "none"},
+        "returnValue": {"VarKey": null, "Value": ""}
+      },
+      "OutputParams": {}
+    }
+  ]
 }
-// 步骤3: 显示新窗口
+// 步骤3: 显示新窗口（如果步骤2没有停止）
 ```
 
-### 策略二：停止动作，沿用旧窗口
+### 策略三：激活旧窗口，停止新实例
 
-步骤2 IfSteps 中放 `sys:stop`，无需步骤3。
-
-### 策略三：激活旧窗口
-
-步骤2 IfSteps 中 assign：
+步骤2 IfSteps 中先 assign 激活，再 `sys:stop`：
 
 ```csharp
 window.Dispatcher.Invoke(() => {
@@ -210,8 +240,6 @@ window.Dispatcher.Invoke(() => {
     window.WindowState = System.Windows.WindowState.Normal;
 });
 ```
-
-再加 `sys:stop`。
 
 ## 最简示例（输入框+确定按钮）
 
