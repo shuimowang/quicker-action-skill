@@ -50,7 +50,8 @@ quicker-action-skill/
 │       ├── csharp-rules.md       # C# 命名空间冲突、IStepContext、线程选择
 │       └── checklist.md          # 生成后自检清单
 ├── examples/
-│   └── demo-text-toolbox.json    # 示例动作：文本工具箱
+│   ├── demo-text-toolbox.json    # 示例动作：文本工具箱（赋值表达式、设置窗口）
+│   └── demo-calculator.json      # 示例动作：计算器（自定义窗口、XAML、回调）
 └── README.md
 ```
 
