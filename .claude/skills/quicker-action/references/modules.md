@@ -257,6 +257,7 @@ if ({number1} > {number2})
 - `nameof()` → 用字符串字面量
 - `when` 异常过滤器 → 不支持
 - `using static` → 不支持
+- `is Type var` 模式匹配（C# 7.0）→ 用 `as` + null 检查：`var x = obj as Type; if (x != null) { ... }`
 
 ### 定义公共方法
 可在赋值中定义 `public` 方法，后续通过 `{方法名}` 调用：
