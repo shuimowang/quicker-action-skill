@@ -39,6 +39,16 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 **判断标准：** 如果用内置步骤 + 表达式就能实现，就不要写 C# 脚本。
 只有当内置步骤明显不够用（需要复杂对象构建、内部服务调用、多步逻辑组合等）时才用脚本。
 
+**赋值表达式能做的事（不需要 C#）：**
+- 读词典：`$={config}["key"]`
+- 调用方法：`$={text}.ToUpper()`、`$={text}.ToLower()`、`$={text}.Trim()`
+- 属性访问：`$={text}.Length`、`$={list}.Count`
+- 三元运算：`$={n}>10?"多":"少"`
+- 字符拼接：`$="Hello "+{name}`
+- 类型转换：`$=int.Parse({numStr})`
+
+**只有这些才需要 C# 脚本：** Base64 编解码、数组反转、Win32 API、外部 DLL 调用、复杂对象操作
+
 ## 界面选型规则
 
 选择界面模块时遵循"能轻则轻"原则：
