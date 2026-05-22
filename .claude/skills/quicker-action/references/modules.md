@@ -242,8 +242,27 @@ if ({number1} > {number2})
 - `_qk` — 内置功能封装
 - `_eval` — 表达式引擎，可注册方法 `_eval.AddMethod(code)`、注册变量 `_eval.RegisterGlobalVariable(name, value)`
 
-### 已注册类型
-`Regex`、`Path`、`JsonConvert`、`JArray`、`JObject`、`DateTime`、`File`、`Directory`、`Process`、`StringBuilder` 等
+### 已注册类型（常用，可在表达式中直接使用）
+
+**文件/IO：** `File`、`Directory`、`Path`、`FileInfo`、`DirectoryInfo`、`Stream`、`StreamReader`、`StreamWriter`、`FileStream`
+
+**文本处理：** `Regex`、`Match`、`StringBuilder`、`Encoding`、`StringComparer`
+
+**JSON（Newtonsoft）：** `JsonConvert`、`JObject`、`JArray`、`JToken`、`JValue`、`JProperty`
+
+**XML：** `XmlDocument`、`XmlElement`、`XmlNode`、`XmlReader`、`XmlWriter`、`XDocument`、`XElement`、`XAttribute`
+
+**数据：** `DataTable`、`DataSet`、`DataRow`、`DataColumn`、`DataView`
+
+**网络：** `WebClient`、`HttpWebRequest`、`Uri`、`Dns`、`Socket`、`TcpClient`
+
+**进程/线程：** `Process`、`Thread`、`Task`、`Parallel`
+
+**基础类型：** `String`、`Int32`、`Double`、`Boolean`、`DateTime`、`Decimal`、`Math`、`Convert`、`Array`、`Enum`、`Environment`、`Console`
+
+**反射：** `Assembly`、`Type`、`MethodInfo`、`PropertyInfo`、`FieldInfo`
+
+**Linq：** `Enumerable`、`Queryable`、`Expression`
 
 ### 环境限制
 - .NET Framework 4.7.2
