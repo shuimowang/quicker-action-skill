@@ -14,7 +14,7 @@
 | `events` | 事件处理（可选） |
 | `closeWhenDeactivate` | 失去焦点时关闭，`"true"` / `"false"` |
 | `autoCloseTime` | 自动关闭秒数，0为不自动 |
-| `activateMode` | `"AutoActivate"` / `"NoActivate"` / `"None"` |
+| `activateMode` | `"AutoActivate"` 抢占焦点 / `"NotActivated"` 不抢占焦点 / `"NotActivatable"` 不支持激活（仅鼠标操作） / `"NotActivatableMouseThrough"` 不支持激活且鼠标穿透 |
 | `winLocation` | 窗口位置：`"Auto"` / `"CenterScreen"` / `"TopRight"` / `"BottomRight"` / `"TopLeft"` / `"BottomLeft"` / `"TopCenter"` / `"BottomCenter"` / `"LastPosition"` / `"FullScreen"` / `"Manual"` / `"Maximized"` 等 |
 | `winSize` | 窗口尺寸，如 `"300,200"` 或 `"50%,50%"` |
 | `stopIfFail` | 失败停止，`"0"` / `"1"` |
