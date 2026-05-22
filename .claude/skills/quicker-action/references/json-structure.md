@@ -106,6 +106,8 @@ fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
 
 ## 子程序（SubPrograms 字段）
 
+对应类型：`Quicker.Domain.Actions.X.SubPrograms.SubProgram`
+
 子程序定义在 `SubPrograms` 数组中，变量用 `IsInput`/`IsOutput` 标记输入输出。
 
 ```json
@@ -158,6 +160,8 @@ var result = output["outputVar"];
 ```
 
 ## 变量
+
+对应类型：`Quicker.Domain.Actions.X.Variables.ActionVariable`
 
 ```json
 {
@@ -223,6 +227,8 @@ var result = output["outputVar"];
 | 99 | Any | 任意类型 |
 
 ## 步骤基础结构
+
+对应类型：`Quicker.Domain.Actions.X.ActionStep`
 
 ```json
 {
