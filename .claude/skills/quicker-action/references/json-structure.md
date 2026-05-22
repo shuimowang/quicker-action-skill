@@ -16,9 +16,30 @@
   "Id": "GUID",
   "AsSubProgram": false,
   "AllowScrollTrigger": false,
-  "EnableEvaluateVariable": true
+  "EnableEvaluateVariable": true,
+  "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings"
 }
 ```
+
+### ContextMenuData（右键菜单）
+
+多行字符串，一行一个菜单项，格式：`[图标]显示文字|参数值`
+
+```
+[fa:Light_Cogs:#00A0D8]设置|Settings
+[fa:Solid_Info]关于|About
+```
+
+用户点击菜单项时，动作会以参数值运行。在动作中通过 `{quicker_in_param}` 获取传递的参数。
+
+### 内置变量
+
+以下变量不在 Variables 列表中，可直接使用：
+
+| 变量 | 说明 |
+|------|------|
+| `quicker_in_param` | 动作运行时传入的参数（右键菜单、外部调用等） |
+| `_context.ActionId` | 当前动作的 Id |
 
 ## Data（JSON 字符串）
 

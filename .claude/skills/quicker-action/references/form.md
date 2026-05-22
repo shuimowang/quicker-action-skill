@@ -10,22 +10,29 @@
 
 ## InputParams
 
+**编辑动作变量模式（默认）：**
+
 | 参数 | 说明 |
 |------|------|
-| `mode` | 工作模式 |
-| `dictVariable` | 词典变量名（模式2/3时使用） |
 | `title` | 窗口标题 |
-| `formDefinition` | 表单定义（模式3传JSON，其他模式用设计器） |
-| `hintText` | 表单下方提示文字，支持表达式 |
-| `headerWidth` | 标题列宽度 |
+| `help` | 表单下方提示文字，支持表达式 |
+| `titleColumnWidth` | 标题列宽度 |
 | `windowWidth` | 窗口宽度 |
 | `topMost` | 置顶显示 |
-| `restoreActiveWindow` | 关闭后恢复输入焦点 |
-| `stopOnCancel` | 取消后停止动作 |
+| `restoreFocus` | 关闭后恢复输入焦点，`"0"` / `"1"` |
+| `stopIfFail` | 取消后停止动作，`"0"` / `"1"` |
+
+**编辑词典模式（设置窗口常用）：**
+
+| 参数 | 说明 |
+|------|------|
+| `operation` | `"dict"` — 编辑词典数据 |
+| `dictVar` | 词典变量（VarKey 引用） |
+| `formForDictDef` | 表单定义 JSON 字符串（见下方） |
 
 ## OutputParams
 
-`isSuccess`、`errMessage`
+`isSuccess`、`button`（点击的按钮）、`selectedGroup`、`errMessage`
 
 ## 支持的字段数据类型（VarType）
 
@@ -237,37 +244,74 @@ $= _context.GetRootContext().GetVarValue("变量名")
 
 ## 常见用法：设置窗口
 
-`sys:form` 最常见的用途是作为动作的**设置窗口**，配合变量的 `SaveState` 实现跨次运行的配置持久化。
+`sys:form` 最常见的用途是作为动作的**设置窗口**，配合词典变量的 `SaveState` 和右键菜单实现完整的设置入口。
 
-### 模式
+### 完整模式
 
-1. 定义变量，设置 `DefaultValue`（默认值）和 `SaveState: true`
-2. 用 `sys:form`（编辑动作变量模式）让用户修改这些变量
-3. 用户保存后，变量值写回
-4. 动作正常结束时，Quicker 自动将 SaveState 变量的值持久化
-5. 下次运行时，自动读取上次保存的值
+1. 定义一个**词典变量**（Type=10）如 `config`，设 `SaveState: true`，DefaultValue 为 JSON
+2. 在动作的 `ContextMenuData` 中添加设置菜单项
+3. 动作开头判断 `{quicker_in_param}`，如果是设置入口则显示表单并停止
+4. 否则执行主逻辑，从 `config` 词典中读取配置
 
-### 变量状态的 Key 格式
+### SaveState 注意事项
 
-SaveState 变量在状态存储中的 key 为 `$var:变量名`。
-
-也可以在 C# 脚本中通过 `context.ReadState("$var:变量名", "")` 手动读取。
-
-### 注意事项
-
+- **只有主步骤的变量才能勾选 SaveState**，子程序变量不行
 - **只有动作正常结束后才会写入状态**，长期运行的动作或异常退出不会保存
 - 不适合需要实时持久化的场景（这种情况用 `context.WriteState` 手动写入）
-- DefaultValue 支持表达式，但一般不要引用其他变量（顺序问题）
+- 状态 key 格式：`$var:变量名`
 
-### 示例：翻译动作设置
+### 示例：带设置入口的动作
 
-变量定义：
+**顶层字段：**
+```json
+{
+  "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings"
+}
+```
+
+**变量定义：**
 ```json
 [
-  {"Key": "srcLang", "Type": 0, "Desc": "源语言", "DefaultValue": "Auto", "SaveState": true},
-  {"Key": "dstLang", "Type": 0, "Desc": "目标语言", "DefaultValue": "zh", "SaveState": true},
-  {"Key": "vendor", "Type": 0, "Desc": "翻译引擎", "DefaultValue": "Baidu", "SaveState": true}
+  {
+    "Key": "config",
+    "Type": 10,
+    "Desc": "配置",
+    "DefaultValue": "{\"IsSelected\":true}",
+    "SaveState": true
+  }
 ]
 ```
 
-设置步骤（`sys:form` 编辑变量模式）：用户打开表单修改语言和引擎，保存后变量更新，动作结束自动持久化。
+**步骤流程：**
+
+```
+步骤1: If {quicker_in_param} == "Settings"
+  → 步骤1.1: sys:form（编辑词典模式，词典变量=config）
+  → 步骤1.2: sys:stop（设置完直接结束）
+
+步骤2: If {config}["IsSelected"]
+  → 步骤2.1: sys:getSelectedText（获取文本）
+
+步骤3: sys:showText（显示结果）
+```
+
+**sys:form 编辑词典的关键参数：**
+
+```json
+{
+  "StepRunnerKey": "sys:form",
+  "InputParams": {
+    "operation": {"VarKey": null, "Value": "dict"},
+    "dictVar": {"VarKey": "config", "Value": null},
+    "title": {"VarKey": null, "Value": "设置"},
+    "formForDictDef": {"VarKey": null, "Value": "{\"Fields\":[{\"FieldKey\":\"IsSelected\",\"DictVarType\":2,\"Label\":\"是否获取文本\",\"InputMethod\":6}]}"},
+    "titleColumnWidth": {"VarKey": null, "Value": "100"},
+    "windowWidth": {"VarKey": null, "Value": "500"},
+    "stopIfFail": {"VarKey": null, "Value": "0"}
+  },
+  "OutputParams": {"isSuccess": null, "button": null, "errMessage": null}
+}
+```
+
+`formForDictDef` 是 JSON 字符串，`Fields` 数组中每个对象对应词典的一个键。
+`DictVarType` 对应 VarType 枚举值，`InputMethod` 对应输入方式。
