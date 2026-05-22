@@ -1,0 +1,273 @@
+# Quicker 模块定义
+
+## 赋值 (`sys:assign`)
+
+```json
+{
+  "StepRunnerKey": "sys:assign",
+  "InputParams": {
+    "input": {"VarKey": null, "Value": "Hello"},
+    "stopIfFail": {"VarKey": null, "Value": "1"}
+  },
+  "OutputParams": {
+    "isSuccess": null,
+    "output": "目标变量名",
+    "errMessage": null
+  },
+  "IfSteps": null, "ElseSteps": null,
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+**支持表达式：**
+```json
+"input": {"VarKey": null, "Value": "$=\r\nreturn {text}.ToUpper();"}
+```
+
+---
+
+## C# 脚本 (`sys:csscript`)
+
+**普通模式 v1（C# 5.0）：**
+```json
+{
+  "StepRunnerKey": "sys:csscript",
+  "InputParams": {
+    "mode": {"VarKey": null, "Value": "normal"},
+    "script": {"VarKey": null, "Value": "C#代码"},
+    "reference": {"VarKey": null, "Value": ""},
+    "runOnUiThread": {"VarKey": null, "Value": "auto"},
+    "enableCache": {"VarKey": null, "Value": "0"},
+    "stopIfFail": {"VarKey": null, "Value": "1"}
+  },
+  "OutputParams": {
+    "isSuccess": "isSuccessVar",
+    "rtn": "resultVar",
+    "errMessage": null
+  },
+  "IfSteps": [], "ElseSteps": [],
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+**v2 Roslyn（C# 7.3）：** `mode` 改为 `"normal_roslyn"`，同样在 Quicker 进程内执行，可用 `Quicker.Utilities` 等内部程序集。
+
+首次编译冷启动较慢，自动缓存程序集（代码不变可复用缓存）。
+
+**低权限模式：** `mode` 为 `"lowtrust"` / `"lowtrust_roslyn"`，在 LPAgent 代理进程执行，**不能**访问动作变量和 Quicker 内部程序集，仅支持简单文本传递。
+
+Exec 签名不同：`public static string Exec(string paramValue)`
+
+**InputParams：**
+
+| 参数 | 说明 | 值 |
+|------|------|-----|
+| `mode` | 模式 | `"normal"` v1 / `"normal_roslyn"` v2 / `"lowtrust"` 低权限v1 / `"lowtrust_roslyn"` 低权限v2 |
+| `script` | C#代码 | 代码字符串 |
+| `reference` | DLL引用 | 路径，每行一个 |
+| `runOnUiThread` | 执行线程 | 详见 [C# 规则 - 线程选择](csharp-rules.md#线程选择) |
+| `enableCache` | 缓存程序集 | `"0"` / `"1"` |
+| `stopIfFail` | 失败停止 | `"0"` / `"1"` |
+
+**OutputParams：** `isSuccess`（是否成功）、`rtn`（返回值）、`errMessage`（错误信息）
+
+详细用法见 [C# 规则](csharp-rules.md)。
+
+---
+
+## Python 脚本 (`sys:pythonscript`)
+
+基于 pythonnet，仅支持 Python 3。**注意：** 分享动作时无法确定对方是否安装 Python，建议优先用 `sys:csscript`。
+
+**InputParams：**
+
+| 参数 | 说明 |
+|------|------|
+| `script` | Python 代码 |
+
+**OutputParams：** `rtn`（返回值）、`isSuccess`（是否成功）
+
+**变量访问：**
+```python
+text = quicker.context.GetVarValue('变量名')    # 读取
+quicker.context.SetVarValue('变量名', value)     # 写入
+```
+
+**限制：**
+- 必须用官方 Python（python.org），第三方环境可能无法运行
+- 支持版本：Python 3.7 ~ 3.12，64 位系统需 64 位 Python
+- 只访问简单类型变量（数字/文本），复杂类型有闪退风险
+- 不能使用 COM 接口
+- 可返回文本列表和简单词典，不建议返回复杂类型
+
+---
+
+## 获取选中文本 (`sys:getSelectedText`)
+
+InputParams：`format`（`"UnicodeText"` 等）、`waitMs`、`trim`、`stopIfFail`。OutputParams：`isSuccess`、`output`。
+
+---
+
+## 翻译 (`sys:translation`)
+
+InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Auto"` 等）、`vendor`（`"Baidu"` 等）。OutputParams：`resultText`。
+
+---
+
+## 显示文本 (`sys:showText`)
+
+InputParams：`type`（`"NO_WAIT"`）、`text`、`title`、`fontsize`、`enableEscClose`、`autoWrap`。
+
+---
+
+## 提示消息 (`sys:notify`)
+
+InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`msg`。
+
+---
+
+## 调用子程序 (`sys:subprogram`)
+
+InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、`stopIfFail`。OutputParams：`isSuccess`、`var:输出名`、`errMessage`。
+
+---
+
+## 条件判断 (`sys:simpleIf`)
+
+```json
+{
+  "StepRunnerKey": "sys:simpleIf",
+  "InputParams": {
+    "condition": {"VarKey": null, "Value": "$={varName}==\"value\""}
+  },
+  "OutputParams": {},
+  "IfSteps": [ /* ... */ ],
+  "ElseSteps": [ /* ... */ ],
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+---
+
+## 步骤组 (`sys:group`)
+
+将多个步骤分组执行：
+```json
+{
+  "StepRunnerKey": "sys:group",
+  "InputParams": {
+    "skipErr": {"VarKey": null, "Value": "0"},
+    "skipWhenDebugging": {"VarKey": null, "Value": "0"},
+    "useMultiThread": {"VarKey": null, "Value": "0"},
+    "waitAny": {"VarKey": null, "Value": "0"}
+  },
+  "OutputParams": {
+    "isSuccess": null,
+    "errorMessage": null
+  },
+  "IfSteps": [ /* 组内步骤 */ ],
+  "ElseSteps": [],
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+---
+
+## 停止 (`sys:stop`)
+
+```json
+{
+  "StepRunnerKey": "sys:stop",
+  "InputParams": {
+    "returnType": {"VarKey": null, "Value": "none"},
+    "returnValue": {"VarKey": null, "Value": ""}
+  },
+  "OutputParams": {},
+  "IfSteps": [], "ElseSteps": [],
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+---
+
+## 注释 (`sys:comment`)
+
+```json
+{
+  "StepRunnerKey": "sys:comment",
+  "InputParams": {
+    "comment": {"VarKey": null, "Value": "注释内容"}
+  },
+  "OutputParams": {},
+  "IfSteps": [], "ElseSteps": [],
+  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+}
+```
+
+---
+
+## 表达式语法
+
+表达式以 `$=` 开头，支持两种形式：
+
+### 简单表达式
+相当于 C# 赋值语句等号后面的部分：
+- 变量运算：`$= {数字变量} +1`
+- 布尔判断：`$= {数字变量} > 10`
+- 字符串拼接：`$= "Hello " + {name}`
+
+### 复杂表达式
+支持 `if/else`、`return` 等控制流：
+```
+$=
+if ({number1} > {number2})
+{
+    return "较大值为number1:" + {number1};
+}else{
+    return "较大值为number2:" + {number2};
+}
+```
+
+### 变量引用
+使用花括号：`{变量名}`
+
+### 内置对象
+- `_context` — 动作上下文，可调用 `GetVarValue`/`SetVarValue`/`RunSp` 等
+- `_qk` — 内置功能封装
+- `_eval` — 表达式引擎，可注册方法 `_eval.AddMethod(code)`、注册变量 `_eval.RegisterGlobalVariable(name, value)`
+
+### 已注册类型
+`Regex`、`Path`、`JsonConvert`、`JArray`、`JObject`、`DateTime`、`File`、`Directory`、`Process`、`StringBuilder` 等
+
+### 环境限制
+- .NET Framework 4.7.2
+- 普通模式 v1：C# 5.0
+- 普通模式 v2（Roslyn）：C# 7.3
+
+**C# 5.0 禁止使用的语法（cscode 和 csscript 均适用）：**
+- `$""` 字符串插值 → 用 `string.Format("{0}", arg)`
+- `?.` null 条件运算符 → 用 `if (x != null) x.Method()`
+- `=>` 表达式体成员（如 `public int X => 1;`）→ 用完整 `{ get { return 1; } }`。注意：**lambda 表达式允许**，如 `Func<int, int> f = x => x + 1;`
+- `nameof()` → 用字符串字面量
+- `when` 异常过滤器 → 不支持
+- `using static` → 不支持
+
+### 定义公共方法
+可在赋值中定义 `public` 方法，后续通过 `{方法名}` 调用：
+```
+$=
+public int Add(int a, int b)
+{
+    return a + b;
+}
+```
+输出给变量 `Add`，之后调用：`$= {Add}(4, 5)`
+
+### Lambda 与委托
+```csharp
+// Func<参数类型, 返回类型>
+Func<int, int, int> add = (x, y) => x + y;
+
+// Action（无返回值）
+Action<string> greet = name => Console.WriteLine("Hello " + name);
+```
