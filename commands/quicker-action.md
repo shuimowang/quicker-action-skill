@@ -7,7 +7,7 @@
 用户会描述想要的动作功能，你需要：
 1. 理解需求，设计动作的步骤流程
 2. 生成符合 Quicker 格式的 JSON
-3. 保存为 `.json` 文件到用户指定的位置（默认桌面）
+3. 保存为 `.json` 文件到用户指定的位置（当前工作目录）
 
 ## JSON 结构
 
@@ -185,9 +185,13 @@ var result = output["outputVar"];
 }
 ```
 
-**v2 Roslyn（C# 7.3）：** `mode` 改为 `"normal_roslyn"`，同样在 Quicker 进程内执行，可用 `Quicker.Utilities` 等内部程序集。首次编译冷启动较慢，自动缓存程序集（代码不变可复用缓存）。
+**v2 Roslyn（C# 7.3）：** `mode` 改为 `"normal_roslyn"`，同样在 Quicker 进程内执行，可用 `Quicker.Utilities` 等内部程序集。
 
-**低权限模式：** `mode` 为 `"lowtrust"` / `"lowtrust_roslyn"`，在 LPAgent 代理进程执行，**不能**访问动作变量和 Quicker 内部程序集，仅支持简单文本传递。Exec 签名不同：`public static string Exec(string paramValue)`
+首次编译冷启动较慢，自动缓存程序集（代码不变可复用缓存）。
+
+**低权限模式：** `mode` 为 `"lowtrust"` / `"lowtrust_roslyn"`，在 LPAgent 代理进程执行，**不能**访问动作变量和 Quicker 内部程序集，仅支持简单文本传递。
+
+Exec 签名不同：`public static string Exec(string paramValue)`
 
 **InputParams：**
 | 参数 | 说明 | 值 |
@@ -453,7 +457,7 @@ if ({number1} > {number2})
 **C# 5.0 禁止使用的语法（cscode 和 csscript 均适用）：**
 - `$""` 字符串插值 → 用 `string.Format("{0}", arg)`
 - `?.` null 条件运算符 → 用 `if (x != null) x.Method()`
-- `=>` 表达式体成员 → 用完整 `{ return ...; }`
+- `=>` 表达式体成员（如 `public int X => 1;`）→ 用完整 `{ get { return 1; } }`。注意：**lambda 表达式允许**，如 `Func<int, int> f = x => x + 1;`
 - `nameof()` → 用字符串字面量
 - `when` 异常过滤器 → 不支持
 - `using static` → 不支持
