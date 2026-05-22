@@ -23,6 +23,7 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 - [多字段表单](references/form.md) — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
 - [自定义窗口](references/customwindow.md) — XAML、cscode 回调、数据映射、进阶用法
 - [C# 规则](references/csharp-rules.md) — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL
+- [网络共享子程序](references/network-subprograms.md) — 常用网络子程序列表、调用格式、版本管理
 - [生成后自检](references/checklist.md) — 逐条检查 C#、XAML、性能问题
 
 ## 实现优先级（严格遵守）

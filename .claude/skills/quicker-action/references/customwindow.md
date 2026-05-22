@@ -232,7 +232,7 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 
 ### 推荐：网络共享子程序
 
-使用"自定义窗口检测"网络共享子程序，一步搞定：
+使用"自定义窗口检测"网络共享子程序，一步搞定（详见 [网络共享子程序](network-subprograms.md)）：
 
 ```json
 {
