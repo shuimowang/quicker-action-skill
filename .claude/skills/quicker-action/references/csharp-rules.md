@@ -83,6 +83,94 @@ public interface IActionContext
 }
 ```
 
+**ActionExecuteContext 额外属性（`_context` 可直接访问）：**
+
+```csharp
+// Quicker.Domain.Actions.ActionExecuteContext
+// 除 IActionContext 继承的成员外，还有以下属性：
+
+ActionTrigger ActionTrigger { get; set; }
+DateTime StartTime { get; set; }
+Window ParentWindow { get; set; }
+IXProgram XProgram { get; set; }
+ActionDataType LastDataType { get; set; }
+AppServer AppServer { get; }
+string InputParam { get; set; }
+string TextData { get; set; }            // 设置时自动标记 LastDataType = Text
+Image ImageData { get; set; }            // 设置时自动标记 LastDataType = Image
+IList<int> CurrentCodeLine { get; }
+bool IsDebugging { get; }
+IActionLogger ActionLogger { get; set; }
+IDictionary<string, object> CustomData { get; }  // 变量存储
+ActionStopFlag StopFlag { get; set; }
+bool BreakFlag { get; set; }
+bool HideWarning { get; set; }
+string ErrorMessage { get; set; }
+IntPtr ActiveWindowHwnd { get; set; }
+Point? WaiteUserWindowTopLeft { get; }
+string SuccessMessage { get; set; }
+bool ContinueFlag { get; set; }
+PointTargetInfo TargetInfo { get; set; }
+string WaiteUserWindowResult { get; set; }
+bool IsStoppedByUser { get; set; }
+bool SkipStopWarning { get; set; }
+bool? IsImeEnabled { get; }
+IDictionary<string, object> States { get; }      // 跨步骤状态存储
+ActionExecuteContext ChildContext { get; set; }
+bool ReturnError { get; set; }
+string ReturnResult { get; set; }
+object ReturnResultObject { get; set; }
+TargetBrowserInfo TargetBrowser { get; set; }
+bool HasImageParamUsed { get; set; }
+ActionExtraContextData ExtraData { get; }
+int ClipboardSeqBeforeCtrlC { get; set; }
+```
+
+**ActionExecuteContext 额外方法：**
+
+```csharp
+// 等待用户窗口
+void AddWaiteWindow(string key, WaitUserWindow waitWindow);
+void UpdateWaiteWindowLocation(Point windowTopLeft);
+void OnWaitWindowClosed(string key, string selectedOperation);
+bool IsWaitWindowClosed(string key);
+void CloseWaitWin(string key);
+WaitUserWindow GetWaitWindow(string key);
+
+// 执行控制
+void StopAction(ActionStopFlag stopFlag, string reason, bool skipCloseWaitWindow = false);
+void SetBreakFlag();
+bool IsShouldBreak();
+void ClearBreakFlag();
+void SetContinueFlag();
+bool ShouldContinue();
+void ClearContinueFlag();
+
+// 媒体
+MediaPlayer GetMediaPlayer();
+
+// 通知
+void ShowWarning(string message, ActionStep step);
+
+// 输入法
+void SaveImeState(bool isEnabled);
+
+// 表达式引擎
+EvalContext GetEvalContext();
+
+// 窗口位置记忆
+void SaveTextWindowLocation(string autoCloseKey, Window w);
+Rect? GetTextWindowLocation(string autoCloseKey);
+WindowState? GetTextWindowState(string autoCloseKey);
+
+// 资源管理
+void RegisterDisposable(IDisposable disposableObject);
+void TryDisposeObjects();
+
+// 子程序结果
+bool IsSubProgramSuccess();
+```
+
 **存储机制：**
 
 | 机制 | 方法 | 类型 | 生命周期 | 说明 |
