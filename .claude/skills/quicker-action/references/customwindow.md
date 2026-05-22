@@ -228,7 +228,29 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 
 ## 多实例处理
 
-**使用 `sys:customwindow` 必须处理多实例。** 在 `ShowAndWaitClose` 步骤前，先用 `GetWindows` + `simpleIf` 检测已有窗口。
+**使用 `sys:customwindow` 必须处理多实例。**
+
+### 推荐：网络共享子程序
+
+使用"自定义窗口检测"网络共享子程序，一步搞定：
+
+```json
+{
+  "StepRunnerKey": "sys:subprogram",
+  "InputParams": {
+    "subProgram": {"VarKey": null, "Value": "@@3d7a8957-8ae3-4cd7-5327-08ddb0c7f7f4@7@自定义窗口检测"},
+    "var:窗口标识": {"VarKey": null, "Value": "$=_context.ActionId"},
+    "var:窗口操作": {"VarKey": null, "Value": "关闭窗口"},
+    "stopIfFail": {"VarKey": null, "Value": "1"},
+    "skipDebugOutput": {"VarKey": null, "Value": "1"}
+  },
+  "OutputParams": {"isSuccess": null, "errMessage": null}
+}
+```
+
+在 `ShowAndWaitClose` 步骤前执行此子程序即可确保单实例。
+
+### 手动实现
 
 窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
 如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
@@ -239,7 +261,7 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 步骤3: ShowAndWaitClose → 显示新窗口（仅停止策略不需要此步）
 ```
 
-### 策略选择（按优先级）
+#### 策略选择（按优先级）
 
 | 优先级 | 做法 | 说明 |
 |--------|------|------|
@@ -247,7 +269,7 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 | 2 | 关闭旧窗口，停止动作 | 需要刷新窗口内容 |
 | 3 | 激活旧窗口，停止新实例 | 需要保留旧窗口状态 |
 
-### 策略一：停止动作（推荐）
+#### 策略一：停止动作（推荐）
 
 步骤2 IfSteps 中放 `sys:stop`，无需步骤3。
 
