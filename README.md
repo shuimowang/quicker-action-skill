@@ -47,7 +47,7 @@ quicker-action-skill/
 │       ├── modules.md            # 模块定义（assign/csscript/pythonscript 等）
 │       ├── form.md               # 多字段表单 sys:form（字段类型、设置窗口）
 │       ├── customwindow.md       # 自定义窗口 XAML、回调、进阶用法
-│       ├── csharp-rules.md       # C# 命名空间冲突、IStepContext、线程选择
+│       ├── csharp-rules.md       # C# 命名空间冲突、IStepContext、内置变量、线程选择
 │       └── checklist.md          # 生成后自检清单
 ├── examples/
 │   ├── demo-text-toolbox.json    # 示例动作：文本工具箱（赋值表达式、设置窗口）
@@ -63,6 +63,7 @@ quicker-action-skill/
 - 内置实现优先级指导（内置模块 > 表达式 > C# 脚本）
 - 内置界面选型规则（form > custompanel > customwindow）
 - 内置常见错误自检（命名空间冲突、变量声明、XAML 语法等）
+- 内置变量详解（`_context` 存储机制、`_eval` DLL 注册、上下文层级）
 
 ## 支持的模块
 
