@@ -79,6 +79,7 @@ B. [选项]
 
 ## 生成规则
 
+0. **先读文档再动手** — 生成前必须 Read 所有用到的 references/*.md，确认参数名、cscode 签名、XAML 写法后再开始写代码
 1. `Data` 字段必须是 JSON 字符串（需要转义）
 2. 按实现优先级选择方案，优先用内置模块和表达式
 3. C# 脚本通过 `context.GetVarValue()` / `context.SetVarValue()` 访问变量
