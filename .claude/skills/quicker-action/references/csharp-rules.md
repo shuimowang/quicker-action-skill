@@ -38,20 +38,63 @@ _eval.AddMethod("MyMethod", (Func<int, int, int>)((a, b) => a + b));
 
 ### `_context`（动作执行上下文）
 
-类型：`Quicker.Domain.Actions.ActionExecuteContext`，是 `IActionContext` 的完整实现。
+类型：`Quicker.Domain.Actions.ActionExecuteContext`，实现 `IActionContext` 接口。
 
-**常用属性：**
+**IActionContext 完整接口：**
+
+```csharp
+// Quicker.Public.Interfaces.IActionContext
+public interface IActionContext
+{
+    int Id { get; }
+    bool IsRootContext { get; }
+    string ActionId { get; }
+    string ActionTitle { get; }
+    ActionExtraContextData ExtraData { get; }
+    CancellationToken? CancellationToken { get; }
+
+    IDictionary<string, object> GetVariables();
+    void SetVarValue(string varName, object value);
+    object GetVarValue(string varName);
+    object TryGetValue(string var, object defaultValue);
+    bool IsVarExists(string varName);
+
+    IActionContext GetRootContext();
+    IActionContext GetParentContext();
+
+    IDictionary<string, object> RunSp(string spName, IDictionary<string, object> inputParams);
+    IDictionary<string, object> RunSp(string spName, object inputParams);
+    Task<IDictionary<string, object>> RunSpAsync(string spName, IDictionary<string, object> inputParams);
+    Task<IDictionary<string, object>> RunSpAsync(string spName, object inputParams);
+
+    void WriteState(string key, string value);
+    string ReadState(string key, string defaultValue);
+    void WriteCache(string key, object value, int maxKeepSeconds);
+    T ReadCache<T>(string key, T defaultValue);
+    object RemoveCache(string key);
+    void ClearCache();
+
+    void UpdateVariablesFromDict(IDictionary<string, object> dict);
+    void UpdateVariablesFromJson(string dictJson);
+    void RegisterDisposable(IDisposable disposableObject);
+    object EvalExpression(string expression, bool onUiThread = false);
+    void ExecuteCommonOperationItem(CommonOperationItem item);
+    bool IsShouldStopAction();
+}
+```
+
+**ActionExecuteContext 额外属性（`_context` 可直接访问）：**
 
 | 属性 | 说明 |
 |------|------|
 | `ActionId` | 当前动作 ID（常用作窗口标识 `$=_context.ActionId`） |
-| `ActionTitle` | 当前动作标题 |
 | `InputParam` | 右键菜单/外部调用传入的参数 |
 | `ParentWindow` | 父窗口引用 |
 | `ActiveWindowHwnd` | 当前活动窗口句柄 |
-| `IsRootContext` | 是否为主程序上下文 |
 | `RootContext` | 主程序上下文 |
 | `ParentContext` | 直接调用者上下文 |
+| `TextData` | 文本数据 |
+| `ImageData` | 图片数据 |
 
 **存储机制：**
 
@@ -84,20 +127,6 @@ var json = _context.ReadState("config_json", "{}");
   └─ 子程序 A: GetParentContext() → 主程序, GetRootContext() → 主程序
        └─ 子程序 B: GetParentContext() → A, GetRootContext() → 主程序
 ```
-
-- `GetRootContext()` 始终返回最顶层主程序的 `_context`
-- `GetParentContext()` 返回直接调用者的 `_context`
-
-**其他常用方法：**
-
-| 方法 | 说明 |
-|------|------|
-| `EvalExpression(expr, onUiThread)` | 求值表达式，`onUiThread=true` 在 UI 线程执行 |
-| `RunSp` / `RunSpAsync` | 调用子程序（同步/异步） |
-| `TryGetValue(var, default)` | 读变量，不存在返回默认值 |
-| `IsVarExists(varName)` | 检查变量是否存在 |
-| `UpdateVariablesFromDict` / `FromJson` | 批量更新变量 |
-| `RegisterDisposable(obj)` | 注册 IDisposable，动作结束自动释放 |
 
 ### `_qk`
 
