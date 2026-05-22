@@ -2,6 +2,8 @@
 
 ## 顶层
 
+对应类型：`Quicker.Common.ActionItem`
+
 ```json
 {
   "Row": 0,
