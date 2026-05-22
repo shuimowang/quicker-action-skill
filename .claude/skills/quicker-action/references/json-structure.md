@@ -17,9 +17,14 @@
   "AsSubProgram": false,
   "AllowScrollTrigger": false,
   "EnableEvaluateVariable": true,
+  "AutoUpdate": true,
   "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings"
 }
 ```
+
+### AutoUpdate（自动更新）
+
+分享动作后，作者更新动作时其他用户会自动同步更新。一般设为 `true`。
 
 ### ContextMenuData（右键菜单）
 
@@ -52,6 +57,13 @@
   "Steps": []
 }
 ```
+
+### LimitSingleInstance（限制单实例）
+
+控制动作运行期间是否允许再次触发该动作：
+
+- `false`（默认）：允许同时运行多个实例
+- `true`：动作运行期间再次触发会被忽略，避免重复执行
 
 ## 图标（Icon 字段）
 
