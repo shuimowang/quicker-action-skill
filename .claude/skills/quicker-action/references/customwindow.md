@@ -32,7 +32,7 @@
   （即使不用 qk:Att.Action 也要加）
 - **不能用字符串绑定事件**：`Loaded="OnLoaded"`、`Click="OnClick"` 等写法会报错，
   事件必须在 cscode 中通过代码绑定
-- 按钮操作：`qk:Att.Action="操作内容"`
+- 按钮操作：`qk:Att.Action="操作内容"`（存在但不推荐，优先在 cscode 中用 `win.Close()` 关闭窗口）
 
 **搜索框等需要实时响应的控件**：不要用 `{Binding}`，
 在 cscode 中 `FindName` 获取控件后绑定 `TextChanged` 等事件。
@@ -158,8 +158,6 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 返回图片。可在 `qk:IconControl` 或 `<Image>` 中直接使用。
 
 ## 多实例处理
-
-**动作默认设置 `LimitSingleInstance=false`。**
 
 **使用 `sys:customwindow` 必须处理多实例。** 在 `ShowAndWaitClose` 步骤前，先用 `GetWindows` + `simpleIf` 检测已有窗口。
 
