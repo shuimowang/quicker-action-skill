@@ -102,6 +102,12 @@ quicker.context.SetVarValue('变量名', value)     # 写入
 
 ---
 
+## 多字段表单 (`sys:form`)
+
+详细参数和用法见 [form.md](form.md)。
+
+---
+
 ## 获取选中文本 (`sys:getSelectedText`)
 
 InputParams：`format`（`"UnicodeText"` 等）、`waitMs`、`trim`、`stopIfFail`。OutputParams：`isSuccess`、`output`。

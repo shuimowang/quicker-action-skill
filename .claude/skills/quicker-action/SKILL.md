@@ -20,6 +20,7 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 
 - [JSON 结构](references/json-structure.md) — 顶层结构、Data、Variables、VarType、步骤、图标、子程序、参数引用
 - [模块定义](references/modules.md) — 所有 StepRunnerKey 的 InputParams/OutputParams
+- [多字段表单](references/form.md) — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
 - [自定义窗口](references/customwindow.md) — XAML、cscode 回调、数据映射、进阶用法
 - [C# 规则](references/csharp-rules.md) — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL
 - [生成后自检](references/checklist.md) — 逐条检查 C#、XAML、性能问题
@@ -44,13 +45,11 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 
 | 核心需求 | 选择 | 说明 |
 |----------|------|------|
-| 维护配置、填写参数 | `sys:form` | 字段明确，填写后回归主流程 |
-| 提供操作集合、按钮菜单 | `sys:custompanel` | JSON 驱动，轻量交互 |
+| 维护配置、填写参数 | `sys:form` | 字段明确，填写后回归主流程，支持自动计算、分组、验证 |
 | 复杂布局、预览、拖拽、独立窗口 | `sys:customwindow` | XAML 级别控制，重量级 |
 
 **升级条件：**
-- form → custompanel：交互从"填写"变为"选择操作"
-- custompanel → customwindow：需要预览、拖拽、复杂事件、富展示
+- form → customwindow：需要预览、拖拽、复杂事件、富展示
 
 **不要因为"更高级"就默认用 customwindow。**
 
