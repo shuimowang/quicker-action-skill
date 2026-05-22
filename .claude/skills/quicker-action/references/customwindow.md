@@ -134,6 +134,7 @@ using Quicker.Utilities;
 AppHelper.ShowInformation("提示消息");
 AppHelper.ShowSuccess("成功消息");
 AppHelper.ShowWarning("警告消息");
+AppHelper.ShowError("错误消息", false); // 第二个参数 false 避免阻塞
 ```
 
 ### 获取网站 Favicon
