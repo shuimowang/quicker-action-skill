@@ -255,9 +255,21 @@ public enum VarType
 
 对应类型：`Quicker.Domain.Actions.X.ActionStep`
 
+```csharp
+string StepRunnerKey                                    // 步骤执行器键，如 "sys:csscript"
+IDictionary<string, ActionStepParam> InputParams        // 输入参数字典
+IDictionary<string, string> OutputParams                // 输出参数字典（键=输出名，值=目标变量名）
+IList<ActionStep> IfSteps                               // 条件分支（if）的子步骤列表，支持嵌套
+IList<ActionStep> ElseSteps                             // 条件分支（else）的子步骤列表
+string Note                                             // 步骤备注
+bool Disabled                                           // 是否禁用（true=不执行）
+bool Collapsed                                          // 是否在编辑器中折叠显示
+int DelayMs                                             // 执行后延迟（毫秒），再执行下一步骤
+```
+
 ```json
 {
-  "StepRunnerKey": "模块类型",
+  "StepRunnerKey": "sys:csscript",
   "InputParams": {
     "参数名": {"VarKey": null, "Value": "固定值"}
   },
@@ -272,12 +284,6 @@ public enum VarType
   "DelayMs": 0
 }
 ```
-
-**字段说明：**
-- `Note` — 步骤备注
-- `Disabled` — `true` 禁用该步骤（不执行）
-- `Collapsed` — 编辑器中是否折叠显示
-- `DelayMs` — 执行后延迟（毫秒），再执行下一步骤
 
 **参数引用：**
 - 变量：`{"VarKey": "变量名", "Value": null}`
