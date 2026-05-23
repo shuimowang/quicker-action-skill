@@ -40,6 +40,8 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 5. **步骤组 / 子程序**（复杂流程拆分）
 6. **C# 脚本 `sys:csscript`**（兜底方案，不是默认方案）
 
+**注意：** 这里的"C# 脚本"指独立的 `sys:csscript` 步骤。CustomWindow 的 cscode 不算独立步骤——如果用了 CustomWindow，相关的获取、处理、保存逻辑都应在 cscode 中完成，而不是拆成额外的 csscript 步骤。详见 [动作编写规范](references/action-spec.md)。
+
 **判断标准：** 如果用内置步骤 + 表达式就能实现，就不要写 C# 脚本。
 只有当内置步骤明显不够用（需要复杂对象构建、内部服务调用、多步逻辑组合等）时才用脚本。
 

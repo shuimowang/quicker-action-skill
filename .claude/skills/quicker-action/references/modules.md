@@ -185,14 +185,23 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 {
   "StepRunnerKey": "sys:stop",
   "InputParams": {
-    "returnType": {"VarKey": null, "Value": "none"},
-    "returnValue": {"VarKey": null, "Value": ""}
+    "method": {"VarKey": null, "Value": "default"},
+    "isError": {"VarKey": null, "Value": "0"},
+    "return": {"VarKey": null, "Value": ""},
+    "showMessage": {"VarKey": null, "Value": ""}
   },
   "OutputParams": {},
   "IfSteps": [], "ElseSteps": [],
   "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
 }
 ```
+
+| 参数 | 说明 |
+|------|------|
+| `method` | `"default"` 默认 |
+| `isError` | `"0"` 正常停止，`"1"` 错误停止 |
+| `return` | 返回值（子程序场景） |
+| `showMessage` | 停止时显示的消息 |
 
 ---
 

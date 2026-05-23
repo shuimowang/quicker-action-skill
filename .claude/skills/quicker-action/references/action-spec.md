@@ -99,11 +99,14 @@ C# 脚本中读写变量必须用正确的 .NET 类型：
 
 | VarType | .NET 类型 |
 |---------|-----------|
-| 3 Image | `System.Drawing.Bitmap` |
-| 10 Dict | `System.Collections.Generic.Dictionary<string, object>` |
-| 13 Table | `System.Data.DataTable` |
+| 3 | `System.Drawing.Bitmap` |
+| 10 | `System.Collections.Generic.Dictionary<string, object>` |
+| 13 | `System.Data.DataTable` |
 
-**注意：** 剪贴板 `Clipboard.GetImage()` 返回的是 WPF `BitmapSource`，存入 Image 变量前必须转换为 `System.Drawing.Bitmap`。
+**Bitmap 变量注意事项：**
+- 剪贴板 `Clipboard.GetImage()` 返回 WPF `BitmapSource`，存入变量前需用 `CopyPixels` + `LockBits` 转为 `System.Drawing.Bitmap`
+- cscode 中需要在 WPF Image 控件显示 Bitmap 变量时，用 `ToBitmapSource()` 转换（Bitmap → MemoryStream → BitmapImage）
+- cscode 内部用 `static Bitmap` 字段持有数据，不要通过动作变量传递
 
 ---
 
