@@ -74,7 +74,7 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 
 ### 通知方式
 
-cscode 中用 `AppHelper`（`using Quicker.Utilities`）做 Toast 通知，**不要用 `MessageBox.Show`**：
+cscode 中推荐用 `AppHelper`（`using Quicker.Utilities`）做 Toast 通知，不阻塞：
 
 ```csharp
 using Quicker.Utilities;
@@ -84,7 +84,7 @@ AppHelper.ShowWarning("警告消息");
 AppHelper.ShowInformation("提示消息");
 ```
 
-只有需要用户做选择（Yes/No）时才用 `MessageBox.Show`。
+`MessageBox.Show` 用于需要用户做选择（Yes/No）或其他需要阻塞等确认的场景。
 
 ### dataMapping
 
