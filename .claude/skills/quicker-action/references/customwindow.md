@@ -148,6 +148,28 @@ if (controlName == "btnClose")
 
 ## 进阶用法
 
+### 隐藏启动
+
+自定义窗口模块的 `Show()` 无法被阻止，如果需要窗口创建后不立即显示（如托盘图标、后台窗口），用 `Opacity=0` 吞掉首次显示：
+
+XAML 需要设置：
+```xml
+WindowStyle="None" AllowsTransparency="True" Background="Transparent" Opacity="0"
+```
+
+cscode：
+```csharp
+public static void OnWindowLoaded(Window win, IDictionary<string, object> dataContext, ICustomWindowContext winContext)
+{
+    win.Hide();       // 隐藏窗口
+    win.Opacity = 1;  // 恢复透明度，后续 Show 时正常显示
+}
+```
+
+原理：`Opacity=0` 让首次 Show 不可见，`OnWindowLoaded` 中立即 Hide 并恢复透明度。之后调用 `win.Show()` 即可正常显示。
+
+注意：使用此方案需要自定义标题栏（`WindowStyle="None"`）。
+
 ### 常用事件绑定
 
 ```csharp
