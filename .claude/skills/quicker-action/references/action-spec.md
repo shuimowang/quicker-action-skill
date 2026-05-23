@@ -86,19 +86,7 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 ### cscode 规范
 
 - 必须有 `OnWindowCreated`
-- **C# 5.0 禁用语法速查：**
-
-| 写法 | 替代方案 |
-|------|----------|
-| `$"Hello {name}"` | `string.Format("Hello {0}", name)` 或 `"Hello " + name` |
-| `obj?.Method()` | `if (obj != null) obj.Method()` |
-| `public int X => 1;` | `public int X { get { return 1; } }` |
-| `nameof(param)` | `"param"` |
-| `catch (Exception ex) when (ex is ...)` | 不支持，拆成多个 catch |
-| `using static System.Math;` | 不支持，写全名 `Math.Abs()` |
-| `if (obj is Type v)` | `var v = obj as Type; if (v != null)` |
-
-> **注意：** lambda 表达式允许，如 `Func<int, int> f = x => x + 1;`
+- C# 5.0 语法限制详见 [C# 规则 - C# 5.0 禁止使用的语法](csharp-rules.md#c-50-禁止使用的语法cscode-和-csscript-均适用)
 - **命名空间冲突检查（写 cscode 前必须核对）：** Quicker 自动注入 `System.Windows`、`System.Windows.Forms`、`System.Drawing`、`System.IO`、`System.Windows.Shapes`，以下类型必须写全限定名：
   - `Path` → `System.IO.Path`（文件路径）或 `System.Windows.Shapes.Path`（图形）
   - `Image` → `System.Windows.Controls.Image` 或 `System.Drawing.Image`
@@ -110,17 +98,7 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 
 ### 通知方式
 
-cscode 中推荐用 `AppHelper`（`using Quicker.Utilities`）做 Toast 通知，不阻塞：
-
-```csharp
-using Quicker.Utilities;
-AppHelper.ShowError("错误消息", false);   // 第二个参数 false 避免阻塞
-AppHelper.ShowSuccess("成功消息");
-AppHelper.ShowWarning("警告消息");
-AppHelper.ShowInformation("提示消息");
-```
-
-`MessageBox.Show` 用于需要用户做选择（Yes/No）或其他需要阻塞等确认的场景。
+cscode 中用 `AppHelper`（`using Quicker.Utilities`）做 Toast 通知，不阻塞。详见 [自定义窗口 - 通知提示](customwindow.md#通知提示需-using-quickerutilities)。
 
 ### dataMapping
 

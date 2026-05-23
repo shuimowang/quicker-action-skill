@@ -327,36 +327,6 @@ if ({number1} > {number2})
 
 **Linq：** `Enumerable`、`Queryable`、`Expression`
 
-### 环境限制
-- .NET Framework 4.7.2
-- 普通模式 v1：C# 5.0
-- 普通模式 v2（Roslyn）：C# 7.3
+### 环境限制与 C# 语法
 
-**C# 5.0 禁止使用的语法（cscode 和 csscript 均适用）：**
-- `$""` 字符串插值 → 用 `string.Format("{0}", arg)`
-- `?.` null 条件运算符 → 用 `if (x != null) x.Method()`
-- `=>` 表达式体成员（如 `public int X => 1;`）→ 用完整 `{ get { return 1; } }`。注意：**lambda 表达式允许**，如 `Func<int, int> f = x => x + 1;`
-- `nameof()` → 用字符串字面量
-- `when` 异常过滤器 → 不支持
-- `using static` → 不支持
-- `is Type var` 模式匹配（C# 7.0）→ 用 `as` + null 检查：`var x = obj as Type; if (x != null) { ... }`
-
-### 定义公共方法
-可在赋值中定义 `public` 方法，后续通过 `{方法名}` 调用：
-```
-$=
-public int Add(int a, int b)
-{
-    return a + b;
-}
-```
-输出给变量 `Add`，之后调用：`$= {Add}(4, 5)`
-
-### Lambda 与委托
-```csharp
-// Func<参数类型, 返回类型>
-Func<int, int, int> add = (x, y) => x + y;
-
-// Action（无返回值）
-Action<string> greet = name => Console.WriteLine("Hello " + name);
-```
+详见 [C# 规则](csharp-rules.md)：环境限制、C# 5.0 禁用语法、定义公共方法、Lambda 与委托。

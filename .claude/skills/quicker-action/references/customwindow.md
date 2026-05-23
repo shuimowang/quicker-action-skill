@@ -28,8 +28,7 @@
 自定义窗口步骤的 XAML 和普通 WPF 工程不同，有以下限制：
 
 - 去掉 `x:Class` 属性
-- 必须注册命名空间：`xmlns:qk="https://getquicker.net"`
-  （即使不用 qk:Att.Action 也要加）
+- `xmlns:qk="https://getquicker.net"` 仅在使用 `qk:` 前缀控件（如 `qk:IconControl`）时才需要声明，等价于 `Quicker.View.Controls`
 - **不能用字符串绑定事件**：`Loaded="OnLoaded"`、`Click="OnClick"` 等写法会报错，
   事件必须在 cscode 中通过代码绑定
 - 按钮操作：`qk:Att.Action="操作内容"`（存在但不推荐，优先在 cscode 中用 `win.Close()` 关闭窗口）
@@ -308,6 +307,8 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
     {
       "StepRunnerKey": "sys:stop",
       "InputParams": {
+        "method": {"VarKey": null, "Value": "default"},
+        "isError": {"VarKey": null, "Value": "0"},
         "return": {"VarKey": null, "Value": ""},
         "showMessage": {"VarKey": null, "Value": ""}
       },
