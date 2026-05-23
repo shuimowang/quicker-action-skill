@@ -4,22 +4,58 @@
 
 对应类型：`Quicker.Common.ActionItem`
 
+```csharp
+int Row                                                 // 行位置
+int Col                                                 // 列位置
+int ActionType                                          // 动作类型，24=普通动作
+string Title                                            // 动作名称
+string Description                                      // 描述
+string Icon                                             // 图标（如 "fa:Solid_Star"）
+string Path                                             // 路径
+int DelayMs                                             // 延迟（毫秒）
+string Data                                             // 主数据（JSON 字符串，XAction）
+string Data2                                            // 附加数据2
+string Data3                                            // 附加数据3
+string Id                                               // 唯一标识（GUID）
+bool AsSubProgram                                       // 是否作为子程序
+bool AllowScrollTrigger                                 // 是否允许滚动触发
+bool EnableEvaluateVariable                             // 是否启用变量求值
+string ContextMenuData                                  // 右键菜单（多行文本）
+string TemplateId                                       // 模板ID
+int TemplateRevision                                    // 模板版本
+bool UseTemplate                                        // 是否使用模板
+string LastEditTimeUtc                                  // 最后编辑时间
+string SharedActionId                                   // 共享动作ID
+string ShareTimeUtc                                     // 共享时间
+string CreateTimeUtc                                    // 创建时间
+bool SkipWhenStopRunningActions                         // 停止运行时跳过
+bool SkipCheckUpdate                                    // 跳过更新检查
+bool AutoUpdate                                         // 自动更新
+bool KeepInfoWhenUpdate                                 // 更新时保留信息
+string MinQuickerVersion                                // 最低 Quicker 版本
+bool IsTextProcessor                                    // 是否文本处理器
+bool IsImageProcessor                                   // 是否图片处理器
+Association Association                                  // 关联设置
+bool DoNotClosePanel                                    // 不关闭面板
+string UserLimitation                                   // 用户限制
+```
+
 ```json
 {
-  "Row": 0,
-  "Col": 0,
-  "ActionType": 24,
-  "Title": "动作名称",
-  "Description": "描述",
-  "Icon": "fa:Solid_Star",
-  "Path": null,
-  "DelayMs": 0,
+  "Row": 0, "Col": 0, "ActionType": 24,
+  "Title": "动作名称", "Description": "描述",
+  "Icon": "fa:Solid_Star", "Path": null, "DelayMs": 0,
   "Data": "{...JSON字符串...}",
+  "Data2": null, "Data3": null, "Children": null,
   "Id": "GUID",
-  "AsSubProgram": false,
-  "AllowScrollTrigger": false,
-  "EnableEvaluateVariable": true,
-  "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings"
+  "TemplateId": null, "TemplateRevision": 0, "UseTemplate": false,
+  "LastEditTimeUtc": null, "SharedActionId": "", "ShareTimeUtc": null, "CreateTimeUtc": null,
+  "AsSubProgram": false, "SkipWhenStopRunningActions": false, "SkipCheckUpdate": false,
+  "AutoUpdate": true, "KeepInfoWhenUpdate": false, "MinQuickerVersion": "",
+  "ContextMenuData": "", "AllowScrollTrigger": false, "EnableEvaluateVariable": false,
+  "IsTextProcessor": false, "IsImageProcessor": false,
+  "Association": { ... },
+  "DoNotClosePanel": false, "UserLimitation": null
 }
 ```
 
@@ -110,27 +146,33 @@ fa:Solid_Pen:#FF0000    # 矢量图标，自定义颜色
 
 子程序定义在 `SubPrograms` 数组中，变量用 `IsInput`/`IsOutput` 标记输入输出。
 
+```csharp
+string Id                                               // 唯一标识（GUID）
+string Name                                             // 子程序名
+string Description                                      // 描述
+string SummaryExpression                                // 摘要表达式
+string CreateTimeUtc                                    // 创建时间
+string LastEditTimeUtc                                  // 最后编辑时间
+bool IsLocalEdited                                      // 是否本地编辑过
+bool IsProtected                                        // 是否受保护
+IList<SubProgram> SubPrograms                           // 嵌套子程序
+IList<ActionVariable> Variables                         // 变量列表
+IList<ActionStep> Steps                                 // 步骤列表
+string SharedId                                         // 共享ID
+string ShareTimeUtc                                     // 共享时间
+bool? UseServerVersion                                  // 是否使用服务器版本
+```
+
 ```json
 {
-  "Id": "GUID",
-  "Name": "子程序名",
-  "Description": "描述",
+  "Id": "GUID", "Name": "子程序名", "Description": "描述",
   "SummaryExpression": "$$",
-  "IsLocalEdited": false,
-  "IsProtected": false,
-  "SubPrograms": [],
-  "SharedId": null,
-  "ShareTimeUtc": null,
-  "UseServerVersion": null,
+  "CreateTimeUtc": "...", "LastEditTimeUtc": "...",
+  "IsLocalEdited": false, "IsProtected": false,
+  "SubPrograms": [], "SharedId": null, "ShareTimeUtc": null, "UseServerVersion": null,
   "Variables": [
-    {
-      "Key": "inputVar", "Type": 0, "Desc": "输入",
-      "IsInput": true, "IsOutput": false, "ParamName": "inputVar"
-    },
-    {
-      "Key": "outputVar", "Type": 0, "Desc": "输出",
-      "IsInput": false, "IsOutput": true, "ParamName": "outputVar"
-    }
+    { "Key": "inputVar", "Type": 0, "Desc": "输入", "IsInput": true, "IsOutput": false, "ParamName": "inputVar" },
+    { "Key": "outputVar", "Type": 0, "Desc": "输出", "IsInput": false, "IsOutput": true, "ParamName": "outputVar" }
   ],
   "Steps": []
 }
@@ -163,34 +205,41 @@ var result = output["outputVar"];
 
 对应类型：`Quicker.Domain.Actions.X.Storage.ActionVariable`
 
+```csharp
+string Key                                              // 变量名
+bool IsLocked                                           // 是否锁定
+VarType Type                                            // 变量类型（见下方枚举）
+string Desc                                             // 描述
+string DefaultValue                                     // 默认值
+bool SaveState                                          // 是否持久化（动作结束时自动保存）
+bool IsInput                                            // 是否子程序输入参数
+bool IsOutput                                           // 是否子程序输出参数
+string ParamName                                        // 参数名
+object InputParamInfo                                   // 输入参数信息
+object OutputParamInfo                                  // 输出参数信息
+object TableDef                                         // 表格定义
+object CustomType                                       // 自定义类型
+string Group                                            // 分组
+```
+
+```json
+{
+  "Key": "变量名", "IsLocked": false, "Type": 0, "Desc": "",
+  "DefaultValue": "", "SaveState": false, "IsInput": false, "IsOutput": false,
+  "ParamName": "", "InputParamInfo": null, "OutputParamInfo": null,
+  "TableDef": null, "CustomType": null, "Group": ""
+}
+```
+
 **变量类型与 .NET 类型的对应关系：**
 
 | VarType | 名称 | .NET 类型 |
 |---------|------|-----------|
-| 3 | Image | `System.Drawing.Bitmap` |
+| 3 | Bitmap | `System.Drawing.Bitmap` |
 | 10 | Dict | `System.Collections.Generic.Dictionary<string, object>` |
 | 13 | Table | `System.Data.DataTable` |
 
-C# 脚本中读写这些变量时需用对应的 .NET 类型。例如图片变量不能直接用 WPF 的 `BitmapSource`，需先转换。
-
-```json
-{
-  "Key": "变量名",
-  "IsLocked": false,
-  "Type": 0,
-  "Desc": "",
-  "DefaultValue": "",
-  "SaveState": false,
-  "IsInput": false,
-  "IsOutput": false,
-  "ParamName": "",
-  "InputParamInfo": null,
-  "OutputParamInfo": null,
-  "TableDef": null,
-  "CustomType": null,
-  "Group": ""
-}
-```
+C# 脚本中读写这些变量时需用对应的 .NET 类型。例如 Bitmap 变量不能直接用 WPF 的 `BitmapSource`，需先转换。
 
 ### SaveState（作为状态使用）
 
