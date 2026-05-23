@@ -63,6 +63,31 @@ cscode 只支持以下三个回调，不存在 `OnWindowClosing`、`OnWindowClos
 
 cscode 使用 **C# 5.0**，不能写 `$""` 插值、`?.`、表达式体成员等。
 
+### 回调执行时序
+
+反编译确认的 Quicker 内部流程：
+
+```
+Window win = XamlReader.Load(xaml) as Window;   // XAML 解析成完整 Window 对象
+win.DataContext = dataContext;                    // 挂载数据上下文
+winContext.Window = win;                          // 赋值窗口引用
+// 注册部分宿主级事件（拖动、缩放等）
+★ OnWindowCreated(win, dataContext, winContext)   // 回调
+win.Show();                                       // 显示窗口
+// WPF 加载流程 → window.Loaded 事件触发
+★ OnWindowLoaded(win, dataContext, winContext)    // 回调（通过 Loaded += delegate 注册）
+```
+
+**OnWindowCreated 时的状态：**
+- `XamlReader.Load` 已完成，XAML 中带 `x:Name` 的控件已实例化
+- `win.FindName("xxx")` 可用，能找到控件
+- DataContext 已挂载，数据绑定已生效
+- 窗口尚未 Show，不在可视化树中，Loaded 尚未触发
+
+**OnWindowLoaded 时的状态：**
+- 窗口已进入可视化树，WPF `Loaded` 事件已触发
+- 适合绑定需要可视化树参与的事件（键盘、焦点等）
+
 ### ICustomWindowContext 接口
 
 ```csharp
