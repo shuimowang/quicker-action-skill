@@ -198,7 +198,7 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 
 | 参数 | 说明 |
 |------|------|
-| `method` | `"default"` 默认 |
+| `method` | `"default"` 停止当前动作/从子程序返回（子程序中不停止主动作），`"forcestop"` 强制停止整个动作（即使在子程序中） |
 | `isError` | `"0"` 正常停止，`"1"` 错误停止 |
 | `return` | 返回值（子程序场景） |
 | `showMessage` | 停止时显示的消息 |
