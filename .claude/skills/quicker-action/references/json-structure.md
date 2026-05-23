@@ -273,6 +273,12 @@ public enum VarType
 }
 ```
 
+**字段说明：**
+- `Note` — 步骤备注
+- `Disabled` — `true` 禁用该步骤（不执行）
+- `Collapsed` — 编辑器中是否折叠显示
+- `DelayMs` — 执行后延迟（毫秒），再执行下一步骤
+
 **参数引用：**
 - 变量：`{"VarKey": "变量名", "Value": null}`
 - 固定值：`{"VarKey": null, "Value": "值"}`
