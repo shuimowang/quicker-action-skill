@@ -66,7 +66,7 @@ Exec 签名不同：`public static string Exec(string paramValue)`
 | `script` | C#代码 | 代码字符串 |
 | `reference` | DLL引用 | 路径，每行一个 |
 | `runOnUiThread` | 执行线程 | 详见 [C# 规则 - 线程选择](csharp-rules.md#线程选择) |
-| `enableCache` | 缓存程序集 | `"0"` / `"1"` |
+| `enableCache` | 缓存程序集 | `"0"` / `"1"`，允许缓存编译后的程序集以加快下次启动，版本升级时自动丢弃 |
 | `stopIfFail` | 失败停止 | `"0"` / `"1"` |
 
 **OutputParams：** `isSuccess`（是否成功）、`rtn`（返回值）、`errMessage`（错误信息）
@@ -128,7 +128,7 @@ InputParams：`type`（`"NO_WAIT"`）、`text`、`title`、`fontsize`、`enableE
 
 ## 提示消息 (`sys:notify`)
 
-InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`msg`。
+InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`msg`、`maxLines`（最大行数，0 不限）、`style`（`"Default"` 屏幕中下 / `"Style2"` 屏幕右上）、`clickAction`（点击执行的动作，仅 Default 风格）。
 
 ---
 

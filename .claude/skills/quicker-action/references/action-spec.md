@@ -58,7 +58,7 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 
 ### XAML 规范
 
-- 必须声明 `xmlns:qk="https://getquicker.net"`
+- `xmlns:qk="https://getquicker.net"` 仅在使用 qk: 前缀控件（如 `qk:IconControl`）时才需要声明
 - 不写 `x:Class`
 - 不写 `WindowStartupLocation`（由 `winLocation` 参数控制）
 - 事件绑定在 cscode 中用 `+=`，不写 XAML 字符串绑定
@@ -147,7 +147,7 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 ### CustomWindow
 - [ ] 有多实例检测（GetWindows + simpleIf + Close + stop）
 - [ ] windowId 用 `$=_context.ActionId`
-- [ ] XAML 有 `xmlns:qk`
+- [ ] 使用 qk: 控件时声明了 `xmlns:qk`，未使用时不强制
 - [ ] XAML 无 `x:Class`、无 `WindowStartupLocation`
 - [ ] 事件在 cscode 中绑定，不写 XAML 字符串绑定
 
