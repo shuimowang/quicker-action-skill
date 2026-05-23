@@ -230,22 +230,20 @@ public enum VarType
     Number = 1,
     [Display(Name = "布尔(是否)", Order = 1)]
     Boolean = 2,
-    [Display(Name = "图片", Order = 12)]
+    [Display(Name = "图片(System.Drawing.Bitmap)", Order = 12)]
     Image = 3,
     [Display(Name = "文本列表", Order = 21)]
     List = 4,
     [Display(Name = "时间日期", Order = 11)]
     DateTime = 6,
-    [Display(Name = "词典", Order = 22)]
+    [Display(Name = "词典(System.Collections.Generic.Dictionary<string, object>)", Order = 22)]
     Dict = 10,
     [Display(Name = "表单", Order = 33)]
     Form = 11,
     [Display(Name = "数字(整数)", Order = 3)]
     Integer = 12,
-    [Display(Name = "表格", Order = 34)]
+    [Display(Name = "表格(System.Data.DataTable)", Order = 34)]
     Table = 13,
-    [Display(Name = "表单(词典)", Order = 33)]
-    FormForDict = 14,
     [Display(Name = "对象(Object)", Order = 31)]
     Object = 98,
     [Display(Name = "任意类型", Order = 32)]
@@ -258,14 +256,13 @@ public enum VarType
 | 0 | Text | 文本 |
 | 1 | Number | 数字(小数) |
 | 2 | Boolean | 布尔(是否) |
-| 3 | Image | 图片（`System.Drawing.Bitmap`） |
+| 3 | Image | 图片 |
 | 4 | List | 文本列表 |
 | 6 | DateTime | 时间日期 |
 | 10 | Dict | 词典 |
 | 11 | Form | 表单 |
 | 12 | Integer | 数字(整数) |
 | 13 | Table | 表格 |
-| 14 | FormForDict | 表单(词典) |
 | 98 | Object | 对象 |
 | 99 | Any | 任意类型 |
 
