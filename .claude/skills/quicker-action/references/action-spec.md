@@ -155,7 +155,7 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 - [ ] 无 C# 5.0 禁止语法（`$""`、`?.`、`=>` 表达式体、`nameof()`）
 - [ ] 命名空间冲突已全限定（Image、Rectangle、Bitmap、Point、Path）
 - [ ] 无重复 `using` 声明
-- [ ] Image 变量用 `System.Drawing.Bitmap`，不用 `BitmapSource`
+- [ ] Bitmap 变量用 `System.Drawing.Bitmap`，不用 `BitmapSource`
 - [ ] Clipboard.GetImage() 返回的 BitmapSource 存入变量前已转换
 
 ### 设计
