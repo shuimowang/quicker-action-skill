@@ -33,6 +33,25 @@
   事件必须在 cscode 中通过代码绑定
 - 按钮操作：`qk:Att.Action="操作内容"`（存在但不推荐，优先在 cscode 中用 `win.Close()` 关闭窗口）
 
+### 自定义标题栏（WindowStyle="None"）
+
+使用 `WindowStyle="None"` 时，建议添加 `WindowChrome` 保持窗口圆角一致：
+
+```xml
+<Window ...
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome GlassFrameThickness="0" CornerRadius="5" CaptionHeight="0"/>
+    </shell:WindowChrome.WindowChrome>
+    <Border BorderThickness="1" CornerRadius="5" Background="White">
+        <!-- 内容 -->
+    </Border>
+</Window>
+```
+
+`WindowChrome` 让窗口边框和内容区的圆角对齐，避免默认直角与自定义圆角不一致。
+
 **搜索框等需要实时响应的控件**：不要用 `{Binding}`，
 在 cscode 中 `FindName` 获取控件后绑定 `TextChanged` 等事件。
 因为自定义窗口的 dataContext 是全部通知，绑定容易产生意外行为。
@@ -152,9 +171,18 @@ if (controlName == "btnClose")
 
 自定义窗口模块的 `Show()` 无法被阻止，如果需要窗口创建后不立即显示（如托盘图标、后台窗口），用 `Opacity=0` 吞掉首次显示：
 
-XAML 需要设置：
+XAML 需要设置（配合 WindowChrome 保持圆角一致）：
 ```xml
-WindowStyle="None" AllowsTransparency="True" Background="Transparent" Opacity="0"
+<Window ...
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent" Opacity="0">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome GlassFrameThickness="0" CornerRadius="5" CaptionHeight="0"/>
+    </shell:WindowChrome.WindowChrome>
+    <Border BorderThickness="1" CornerRadius="5" Background="White">
+        <!-- 内容 -->
+    </Border>
+</Window>
 ```
 
 cscode：
@@ -167,8 +195,6 @@ public static void OnWindowLoaded(Window win, IDictionary<string, object> dataCo
 ```
 
 原理：`Opacity=0` 让首次 Show 不可见，`OnWindowLoaded` 中立即 Hide 并恢复透明度。之后调用 `win.Show()` 即可正常显示。
-
-注意：使用此方案需要自定义标题栏（`WindowStyle="None"`）。
 
 ### 常用事件绑定
 
