@@ -231,6 +231,21 @@ string Group                                            // 分组
 }
 ```
 
+**字段说明：**
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `Key` | 是 | 变量名，步骤中用 `{Key}` 引用 |
+| `Type` | 是 | VarType 枚举值（见下表） |
+| `Desc` | 否 | 变量描述，显示在编辑器中 |
+| `DefaultValue` | 否 | 初始值，见下方默认值写法 |
+| `SaveState` | 否 | `true` 时动作结束后自动持久化，下次运行自动加载 |
+| `IsLocked` | 否 | `true` 时用户不可在编辑器中修改 |
+| `IsInput` | 否 | 子程序输入参数标记 |
+| `IsOutput` | 否 | 子程序输出参数标记 |
+| `ParamName` | 否 | 子程序参数的外部显示名（为空时用 Key） |
+| `Group` | 否 | 变量分组名，编辑器中按组折叠显示 |
+
 **变量类型与 .NET 类型的对应关系：**
 
 | VarType | 名称 | .NET 类型 |
@@ -265,6 +280,15 @@ C# 脚本中读写这些变量时需用对应的 .NET 类型。例如 Bitmap 变
 | 词典 | `json:` 前缀 + JSON | `json:{"key":"value"}` |
 
 一般不要在 DefaultValue 中使用表达式或引用其他变量。
+
+### IsInput / IsOutput（子程序参数）
+
+子程序变量通过 `IsInput`/`IsOutput` 标记为输入/输出参数：
+
+- **IsInput**：调用方传入值，子程序内部可读
+- **IsOutput**：子程序返回值，调用方通过 `var:输出名` 接收
+- `ParamName` 控制子程序在编辑器中显示的参数名（为空时用 Key）
+- 调用子程序时用 `var:参数名` 前缀传参：`"var:输入名": {"VarKey": null, "Value": "值"}`
 
 ## VarType 枚举
 

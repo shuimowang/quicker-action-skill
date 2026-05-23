@@ -86,7 +86,19 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 ### cscode 规范
 
 - 必须有 `OnWindowCreated`
-- C# 5.0 语法：无 `$""`、无 `?.`、无 `=>` 表达式体
+- **C# 5.0 禁用语法速查：**
+
+| 写法 | 替代方案 |
+|------|----------|
+| `$"Hello {name}"` | `string.Format("Hello {0}", name)` 或 `"Hello " + name` |
+| `obj?.Method()` | `if (obj != null) obj.Method()` |
+| `public int X => 1;` | `public int X { get { return 1; } }` |
+| `nameof(param)` | `"param"` |
+| `catch (Exception ex) when (ex is ...)` | 不支持，拆成多个 catch |
+| `using static System.Math;` | 不支持，写全名 `Math.Abs()` |
+| `if (obj is Type v)` | `var v = obj as Type; if (v != null)` |
+
+> **注意：** lambda 表达式允许，如 `Func<int, int> f = x => x + 1;`
 - **命名空间冲突检查（写 cscode 前必须核对）：** Quicker 自动注入 `System.Windows`、`System.Windows.Forms`、`System.Drawing`、`System.IO`、`System.Windows.Shapes`，以下类型必须写全限定名：
   - `Path` → `System.IO.Path`（文件路径）或 `System.Windows.Shapes.Path`（图形）
   - `Image` → `System.Windows.Controls.Image` 或 `System.Drawing.Image`
@@ -187,3 +199,140 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 - [ ] 能在 cscode 做的事没有拆成额外步骤
 - [ ] 变量数量最小化（只定义需要跨步骤传递的）
 - [ ] 没有多余的 csscript 步骤
+
+---
+
+## 完整示例：文本计数动作
+
+一个端到端示例，展示顶层字段、Variables、Steps、右键菜单、`sys:form` 设置窗口的完整结构。
+
+**功能：** 右键菜单进入设置 → 获取选中文本 → 计算字符数 → 显示结果
+
+```json
+{
+  "Row": 0, "Col": 0, "ActionType": 24,
+  "Title": "文本计数", "Description": "统计选中文本的字符数",
+  "Icon": "fa:Solid_Font", "Path": null, "DelayMs": 0,
+  "Data": "{\"LimitSingleInstance\":false,\"SummaryExpression\":\"$$\",\"SubPrograms\":[],\"Variables\":[{\"Key\":\"config\",\"IsLocked\":false,\"Type\":10,\"Desc\":\"配置\",\"DefaultValue\":\"json:{\\\"ShowResult\\\":true}\",\"SaveState\":true,\"IsInput\":false,\"IsOutput\":false,\"ParamName\":\"\",\"InputParamInfo\":null,\"OutputParamInfo\":null,\"TableDef\":null,\"CustomType\":null,\"Group\":\"设置\"}],\"Steps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000001\",\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={quicker_in_param}==\\\"Settings\\\"\"}},\"OutputParams\":{},\"IfSteps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000002\",\"StepRunnerKey\":\"sys:form\",\"InputParams\":{\"operation\":{\"VarKey\":null,\"Value\":\"dict\"},\"dictVar\":{\"VarKey\":\"config\",\"Value\":null},\"title\":{\"VarKey\":null,\"Value\":\"设置\"},\"formForDictDef\":{\"VarKey\":null,\"Value\":\"{\\\"Fields\\\":[{\\\"FieldKey\\\":\\\"ShowResult\\\",\\\"DictVarType\\\":2,\\\"Label\\\":\\\"显示结果\\\",\\\"InputMethod\\\":6}]}\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"0\"}},\"OutputParams\":{\"isSuccess\":null,\"button\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"编辑配置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000003\",\"StepRunnerKey\":\"sys:stop\",\"InputParams\":{\"method\":{\"VarKey\":null,\"Value\":\"default\"},\"isError\":{\"VarKey\":null,\"Value\":\"0\"},\"return\":{\"VarKey\":null,\"Value\":\"\"},\"showMessage\":{\"VarKey\":null,\"Value\":\"\"}},\"OutputParams\":{},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"设置完直接结束\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"右键菜单→设置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000004\",\"StepRunnerKey\":\"sys:getSelectedText\",\"InputParams\":{\"format\":{\"VarKey\":null,\"Value\":\"UnicodeText\"},\"waitMs\":{\"VarKey\":null,\"Value\":\"500\"},\"trim\":{\"VarKey\":null,\"Value\":\"1\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"selectedText\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"获取选中文本\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000005\",\"StepRunnerKey\":\"sys:assign\",\"InputParams\":{\"input\":{\"VarKey\":null,\"Value\":\"$={selectedText}.Length\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"charCount\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"计算字符数\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000006\",\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={config}[\\\"ShowResult\\\"]\"}},\"OutputParams\":{},\"IfSteps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000007\",\"StepRunnerKey\":\"sys:showText\",\"InputParams\":{\"type\":{\"VarKey\":null,\"Value\":\"NO_WAIT\"},\"text\":{\"VarKey\":null,\"Value\":\"$$字符数：{charCount}\"},\"title\":{\"VarKey\":null,\"Value\":\"计数结果\"},\"closeWhenLostFocus\":{\"VarKey\":null,\"Value\":\"true\"},\"winLocation\":{\"VarKey\":null,\"Value\":\"CenterScreen\"}},\"OutputParams\":{\"isSuccess\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"显示结果\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"根据配置决定是否显示\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ContextMenuData\":\"[fa:Light_Cogs:#00A0D8]设置|Settings\"}",
+  "Data2": null, "Data3": null, "Children": null,
+  "Id": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+  "TemplateId": null, "TemplateRevision": 0, "UseTemplate": false,
+  "LastEditTimeUtc": null, "SharedActionId": "", "ShareTimeUtc": null, "CreateTimeUtc": null,
+  "AsSubProgram": false, "SkipWhenStopRunningActions": false, "SkipCheckUpdate": false,
+  "AutoUpdate": true, "KeepInfoWhenUpdate": false, "MinQuickerVersion": "",
+  "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings",
+  "AllowScrollTrigger": false, "EnableEvaluateVariable": false,
+  "IsTextProcessor": false, "IsImageProcessor": false,
+  "Association": {"Trigger": null, "Condition": null, "Operations": null},
+  "DoNotClosePanel": false, "UserLimitation": null
+}
+```
+
+**Data 展开后（可读版）：**
+
+```json
+{
+  "LimitSingleInstance": false,
+  "SummaryExpression": "$$",
+  "SubPrograms": [],
+  "Variables": [
+    {
+      "Key": "config", "IsLocked": false, "Type": 10, "Desc": "配置",
+      "DefaultValue": "json:{\"ShowResult\":true}", "SaveState": true,
+      "IsInput": false, "IsOutput": false, "ParamName": "",
+      "InputParamInfo": null, "OutputParamInfo": null,
+      "TableDef": null, "CustomType": null, "Group": "设置"
+    }
+  ],
+  "Steps": [
+    {
+      "Id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "StepRunnerKey": "sys:simpleIf",
+      "InputParams": {
+        "condition": {"VarKey": null, "Value": "$={quicker_in_param}==\"Settings\""}
+      },
+      "OutputParams": {},
+      "IfSteps": [
+        {
+          "Id": "a1b2c3d4-0001-0001-0001-000000000002",
+          "StepRunnerKey": "sys:form",
+          "InputParams": {
+            "operation": {"VarKey": null, "Value": "dict"},
+            "dictVar": {"VarKey": "config", "Value": null},
+            "title": {"VarKey": null, "Value": "设置"},
+            "formForDictDef": {"VarKey": null, "Value": "{\"Fields\":[{\"FieldKey\":\"ShowResult\",\"DictVarType\":2,\"Label\":\"显示结果\",\"InputMethod\":6}]}"},
+            "stopIfFail": {"VarKey": null, "Value": "0"}
+          },
+          "OutputParams": {"isSuccess": null, "button": null, "errMessage": null},
+          "Note": "编辑配置"
+        },
+        {
+          "Id": "a1b2c3d4-0001-0001-0001-000000000003",
+          "StepRunnerKey": "sys:stop",
+          "InputParams": {
+            "method": {"VarKey": null, "Value": "default"},
+            "isError": {"VarKey": null, "Value": "0"},
+            "return": {"VarKey": null, "Value": ""},
+            "showMessage": {"VarKey": null, "Value": ""}
+          },
+          "OutputParams": {},
+          "Note": "设置完直接结束"
+        }
+      ],
+      "Note": "右键菜单→设置"
+    },
+    {
+      "Id": "a1b2c3d4-0001-0001-0001-000000000004",
+      "StepRunnerKey": "sys:getSelectedText",
+      "InputParams": {
+        "format": {"VarKey": null, "Value": "UnicodeText"},
+        "waitMs": {"VarKey": null, "Value": "500"},
+        "trim": {"VarKey": null, "Value": "1"},
+        "stopIfFail": {"VarKey": null, "Value": "1"}
+      },
+      "OutputParams": {"isSuccess": null, "output": "selectedText", "errMessage": null},
+      "Note": "获取选中文本"
+    },
+    {
+      "Id": "a1b2c3d4-0001-0001-0001-000000000005",
+      "StepRunnerKey": "sys:assign",
+      "InputParams": {
+        "input": {"VarKey": null, "Value": "$={selectedText}.Length"},
+        "stopIfFail": {"VarKey": null, "Value": "1"}
+      },
+      "OutputParams": {"isSuccess": null, "output": "charCount", "errMessage": null},
+      "Note": "计算字符数"
+    },
+    {
+      "Id": "a1b2c3d4-0001-0001-0001-000000000006",
+      "StepRunnerKey": "sys:simpleIf",
+      "InputParams": {
+        "condition": {"VarKey": null, "Value": "$={config}[\"ShowResult\"]"}
+      },
+      "OutputParams": {},
+      "IfSteps": [
+        {
+          "Id": "a1b2c3d4-0001-0001-0001-000000000007",
+          "StepRunnerKey": "sys:showText",
+          "InputParams": {
+            "type": {"VarKey": null, "Value": "NO_WAIT"},
+            "text": {"VarKey": null, "Value": "$$字符数：{charCount}"},
+            "title": {"VarKey": null, "Value": "计数结果"},
+            "closeWhenLostFocus": {"VarKey": null, "Value": "true"},
+            "winLocation": {"VarKey": null, "Value": "CenterScreen"}
+          },
+          "OutputParams": {"isSuccess": null, "errMessage": null},
+          "Note": "显示结果"
+        }
+      ],
+      "Note": "根据配置决定是否显示"
+    }
+  ]
+}
+```
+
+**要点：**
+- `ContextMenuData` 在顶层和 Data 内都需要（顶层控制菜单显示，Data 内控制行为）
+- `config` 词典变量用 `SaveState: true`，配合 `sys:form` 的 `dict` 模式做设置窗口
+- 表达式 `$={selectedText}.Length` 直接调用属性，不需要 C#
+- 文本插值 `$$字符数：{charCount}` 在 `sys:showText` 中拼接显示文本
