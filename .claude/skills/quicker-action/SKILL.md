@@ -93,7 +93,7 @@ B. [选项]
 6. XAML 不要写 `WindowStartupLocation`，窗口位置由 `winLocation` 参数控制
 7. 如果不需要 C# 回调，`cscode` 设为空字符串
 8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
-9. 涉及配置维护优先考虑 `sys:form`，操作集合用 `sys:custompanel`，复杂交互才用 `sys:customwindow`
+9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 [动作编写规范 - 复查清单](references/action-spec.md#复查清单) 逐条验证
 
 $ARGUMENTS
