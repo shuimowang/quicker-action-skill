@@ -1,6 +1,6 @@
 ---
 name: quicker-action
-description: Generate Quicker action JSON files for Claude Code, including Quicker step modules, variables, subprograms, C# scripts, Python scripts, forms, custom panels, and CustomWindow XAML/C#.
+description: Generate Quicker action JSON files for Claude Code, including Quicker step modules, variables, subprograms, C# scripts, Python scripts, forms, and CustomWindow XAML/C#.
 ---
 
 # Quicker 动作生成器

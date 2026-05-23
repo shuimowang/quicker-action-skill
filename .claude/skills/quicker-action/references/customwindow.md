@@ -308,8 +308,8 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
     {
       "StepRunnerKey": "sys:stop",
       "InputParams": {
-        "returnType": {"VarKey": null, "Value": "none"},
-        "returnValue": {"VarKey": null, "Value": ""}
+        "return": {"VarKey": null, "Value": ""},
+        "showMessage": {"VarKey": null, "Value": ""}
       },
       "OutputParams": {}
     }
