@@ -72,6 +72,20 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 - 命名空间冲突必须全限定：`System.Windows.Controls.Image`、`System.Windows.Shapes.Rectangle`、`System.Drawing.Bitmap`
 - 不要同时 import `System.Drawing` 和 `System.Windows.Controls`/`System.Windows.Shapes` 而不加限定
 
+### 通知方式
+
+cscode 中用 `AppHelper`（`using Quicker.Utilities`）做 Toast 通知，**不要用 `MessageBox.Show`**：
+
+```csharp
+using Quicker.Utilities;
+AppHelper.ShowError("错误消息", false);   // 第二个参数 false 避免阻塞
+AppHelper.ShowSuccess("成功消息");
+AppHelper.ShowWarning("警告消息");
+AppHelper.ShowInformation("提示消息");
+```
+
+只有需要用户做选择（Yes/No）时才用 `MessageBox.Show`。
+
 ### dataMapping
 
 - 窗口需要读动作变量时才用 dataMapping
