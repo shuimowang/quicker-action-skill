@@ -19,14 +19,9 @@
   "AsSubProgram": false,
   "AllowScrollTrigger": false,
   "EnableEvaluateVariable": true,
-  "AutoUpdate": true,
   "ContextMenuData": "[fa:Light_Cogs:#00A0D8]设置|Settings"
 }
 ```
-
-### AutoUpdate（自动更新）
-
-分享动作后，作者更新动作时其他用户会自动同步更新。一般设为 `true`。
 
 ### ContextMenuData（右键菜单）
 
@@ -71,13 +66,6 @@ IList<ActionVariable> Variables;     // 动作变量列表
 IList<ActionStep> Steps;             // 步骤列表
 bool LimitSingleInstance;            // 是否限制单实例
 ```
-
-### LimitSingleInstance（限制单实例）
-
-控制动作运行期间是否允许再次触发该动作：
-
-- `false`（默认）：允许同时运行多个实例
-- `true`：动作运行期间再次触发会被忽略，避免重复执行
 
 ## 图标（Icon 字段）
 
@@ -173,7 +161,17 @@ var result = output["outputVar"];
 
 ## 变量
 
-对应类型：`Quicker.Domain.Actions.X.Variables.ActionVariable`
+对应类型：`Quicker.Domain.Actions.X.Storage.ActionVariable`
+
+**变量类型与 .NET 类型的对应关系：**
+
+| VarType | 名称 | .NET 类型 |
+|---------|------|-----------|
+| 3 | Image | `System.Drawing.Bitmap` |
+| 10 | Dict | `System.Collections.Generic.Dictionary<string, object>` |
+| 13 | Table | `System.Data.DataTable` |
+
+C# 脚本中读写这些变量时需用对应的 .NET 类型。例如图片变量不能直接用 WPF 的 `BitmapSource`，需先转换。
 
 ```json
 {
@@ -221,15 +219,48 @@ var result = output["outputVar"];
 
 ## VarType 枚举
 
+对应类型：`Quicker.Domain.Actions.X.Storage.VarType`
+
+```csharp
+public enum VarType
+{
+    [Display(Name = "文本", Order = 10)]
+    Text = 0,
+    [Display(Name = "数字(小数)", Order = 2)]
+    Number = 1,
+    [Display(Name = "布尔(是否)", Order = 1)]
+    Boolean = 2,
+    [Display(Name = "图片", Order = 12)]
+    Image = 3,
+    [Display(Name = "文本列表", Order = 21)]
+    List = 4,
+    [Display(Name = "时间日期", Order = 11)]
+    DateTime = 6,
+    [Display(Name = "词典", Order = 22)]
+    Dict = 10,
+    [Display(Name = "表单", Order = 33)]
+    Form = 11,
+    [Display(Name = "数字(整数)", Order = 3)]
+    Integer = 12,
+    [Display(Name = "表格", Order = 34)]
+    Table = 13,
+    [Display(Name = "表单(词典)", Order = 33)]
+    FormForDict = 14,
+    [Display(Name = "对象(Object)", Order = 31)]
+    Object = 98,
+    [Display(Name = "任意类型", Order = 32)]
+    Any = 99,
+}
+```
+
 | 值 | 名称 | 说明 |
 |----|------|------|
 | 0 | Text | 文本 |
 | 1 | Number | 数字(小数) |
 | 2 | Boolean | 布尔(是否) |
-| 3 | Image | 图片 |
+| 3 | Image | 图片（`System.Drawing.Bitmap`） |
 | 4 | List | 文本列表 |
 | 6 | DateTime | 时间日期 |
-| 9 | Enum | 选项 |
 | 10 | Dict | 词典 |
 | 11 | Form | 表单 |
 | 12 | Integer | 数字(整数) |
