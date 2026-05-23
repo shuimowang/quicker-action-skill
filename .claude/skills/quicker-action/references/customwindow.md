@@ -6,7 +6,7 @@
 
 | 参数 | 说明 |
 |------|------|
-| `type` | `"ShowAndWaitClose"` 显示并等待关闭 / `"Show"` 显示不等待 / `"Close"` 关闭窗口 |
+| `type` | `"ShowAndWaitClose"` 显示并等待关闭 / `"Show"` 显示不等待 / `"Close"` 关闭窗口 / `"GetWindows"` 检测已有窗口（OutputParams 中 `windowList` 接收结果） |
 | `windowMarkup` | WPF XAML 代码 |
 | `dataMapping` | 数据映射（多行文本） |
 | `windowId` | 窗口标识（用于关闭） |
@@ -14,7 +14,7 @@
 | `events` | 事件处理（可选） |
 | `closeWhenDeactivate` | 失去焦点时关闭，`"true"` / `"false"` |
 | `autoCloseTime` | 自动关闭秒数，0为不自动 |
-| `activateMode` | `"AutoActivate"` 抢占焦点 / `"NotActivated"` 不抢占焦点 / `"NotActivatable"` 不支持激活（仅鼠标操作） / `"NotActivatableMouseThrough"` 不支持激活且鼠标穿透 |
+| `activateMode` | `"AutoActivate"` / `"NoActivate"` / `"None"` |
 | `winLocation` | 窗口位置：`"Auto"` / `"CenterScreen"` / `"TopRight"` / `"BottomRight"` / `"TopLeft"` / `"BottomLeft"` / `"TopCenter"` / `"BottomCenter"` / `"LastPosition"` / `"FullScreen"` / `"Manual"` / `"Maximized"` 等 |
 | `winSize` | 窗口尺寸，如 `"300,200"` 或 `"50%,50%"` |
 | `stopIfFail` | 失败停止，`"0"` / `"1"` |
@@ -401,6 +401,296 @@ static void OnWindowKeyDown(object sender, KeyEventArgs e)
     }
 }
 ```
+
+## 多实例处理
+
+**使用 `sys:customwindow` 必须处理多实例。**
+
+### 推荐：网络共享子程序
+
+使用"自定义窗口检测"网络共享子程序，一步搞定（详见 [网络共享子程序](network-subprograms.md)）：
+
+```json
+{
+  "StepRunnerKey": "sys:subprogram",
+  "InputParams": {
+    "subProgram": {"VarKey": null, "Value": "@@3d7a8957-8ae3-4cd7-5327-08ddb0c7f7f4@7@自定义窗口检测"},
+    "var:窗口标识": {"VarKey": null, "Value": "$=_context.ActionId"},
+    "var:窗口操作": {"VarKey": null, "Value": "关闭窗口"},
+    "stopIfFail": {"VarKey": null, "Value": "1"},
+    "skipDebugOutput": {"VarKey": null, "Value": "1"}
+  },
+  "OutputParams": {"isSuccess": null, "errMessage": null}
+}
+```
+
+在 `ShowAndWaitClose` 步骤前执行此子程序即可确保单实例。
+
+### 手动实现
+
+窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
+如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
+
+```
+步骤1: GetWindows → windowList
+步骤2: If windowList.Any() → 执行策略
+步骤3: ShowAndWaitClose → 显示新窗口（仅停止策略不需要此步）
+```
+
+#### 策略选择（按优先级）
+
+| 优先级 | 做法 | 说明 |
+|--------|------|------|
+| 1 | `sys:stop` 停止动作，沿用旧窗口 | 最简单，旧窗口继续运行 |
+| 2 | 关闭旧窗口，停止动作 | 需要刷新窗口内容 |
+| 3 | 激活旧窗口，停止新实例 | 需要保留旧窗口状态 |
+
+#### 策略一：停止动作（推荐）
+
+步骤2 IfSteps 中放 `sys:stop`，无需步骤3。
+
+### 策略二：关闭旧窗口，停止动作
+
+```json
+// 步骤1: 获取窗口列表
+{
+  "StepRunnerKey": "sys:customwindow",
+  "InputParams": {
+    "type": {"VarKey": null, "Value": "GetWindows"},
+    "windowId": {"VarKey": null, "Value": "$=_context.ActionId"},
+    "stopIfFail": {"VarKey": null, "Value": "0"}
+  },
+  "OutputParams": {
+    "isSuccess": null,
+    "windowList": "windowList",
+    "errMessage": null
+  }
+}
+// 步骤2: 关闭已有窗口并停止
+{
+  "StepRunnerKey": "sys:simpleIf",
+  "InputParams": {
+    "condition": {"VarKey": null, "Value": "$={windowList}.Any()"}
+  },
+  "IfSteps": [
+    {
+      "StepRunnerKey": "sys:assign",
+      "InputParams": {
+        "input": {"VarKey": null, "Value": "$=\r\nSystem.Windows.Window window = {windowList}[0];\r\nwindow.Dispatcher.Invoke(() => { window.Close(); });"},
+        "stopIfFail": {"VarKey": null, "Value": "1"}
+      },
+      "OutputParams": {"isSuccess": null, "output": null, "errMessage": null}
+    },
+    {
+      "StepRunnerKey": "sys:stop",
+      "InputParams": {
+        "returnType": {"VarKey": null, "Value": "none"},
+        "returnValue": {"VarKey": null, "Value": ""}
+      },
+      "OutputParams": {}
+    }
+  ]
+}
+// 步骤3: 显示新窗口（如果步骤2没有停止）
+```
+
+### 策略三：激活旧窗口，停止新实例
+
+步骤2 IfSteps 中先 assign 激活，再 `sys:stop`：
+
+```csharp
+window.Dispatcher.Invoke(() => {
+    window.Activate();
+    window.Show();
+    window.WindowState = System.Windows.WindowState.Normal;
+});
+```
+
+## 最简示例（输入框+确定按钮+Escape关闭）
+
+XAML：
+
+```xml
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="输入" Width="300" Height="150">
+  <StackPanel Margin="10">
+    <TextBox x:Name="InputBox" Margin="0,0,0,10"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Content="确定" Tag="ok" Margin="0,0,8,0"/>
+      <Button Content="取消" Tag="cancel"/>
+    </StackPanel>
+  </StackPanel>
+</Window>
+```
+
+cscode：
+
+```csharp
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Collections.Generic;
+using Quicker.Public;
+
+static Window _win;
+static TextBox _inputBox;
+
+public static void OnWindowCreated(Window win, IDictionary<string, object> dataContext, ICustomWindowContext winContext)
+{
+    _win = win;
+}
+
+public static void OnWindowLoaded(Window win, IDictionary<string, object> dataContext, ICustomWindowContext winContext)
+{
+    _inputBox = win.FindName("InputBox") as TextBox;
+    win.PreviewKeyDown += OnWindowKeyDown;
+}
+
+public static bool OnButtonClicked(string controlName, object controlTag, Window win, IDictionary<string, object> dataContext, ICustomWindowContext winContext)
+{
+    string tag = controlTag != null ? controlTag.ToString() : "";
+
+    if (tag == "ok")
+    {
+        dataContext["result"] = _inputBox.Text;
+        win.Close();
+        return false;
+    }
+
+    if (tag == "cancel")
+    {
+        win.Close();
+        return false;
+    }
+
+    return true;
+}
+
+static void OnWindowKeyDown(object sender, KeyEventArgs e)
+{
+    if (e.Key == Key.Escape)
+    {
+        _win.Close();
+        e.Handled = true;
+    }
+}
+```
+
+## 多实例处理
+
+**使用 `sys:customwindow` 必须处理多实例。**
+
+### 推荐：网络共享子程序
+
+使用"自定义窗口检测"网络共享子程序，一步搞定（详见 [网络共享子程序](network-subprograms.md)）：
+
+```json
+{
+  "StepRunnerKey": "sys:subprogram",
+  "InputParams": {
+    "subProgram": {"VarKey": null, "Value": "@@3d7a8957-8ae3-4cd7-5327-08ddb0c7f7f4@7@自定义窗口检测"},
+    "var:窗口标识": {"VarKey": null, "Value": "$=_context.ActionId"},
+    "var:窗口操作": {"VarKey": null, "Value": "关闭窗口"},
+    "stopIfFail": {"VarKey": null, "Value": "1"},
+    "skipDebugOutput": {"VarKey": null, "Value": "1"}
+  },
+  "OutputParams": {"isSuccess": null, "errMessage": null}
+}
+```
+
+在 `ShowAndWaitClose` 步骤前执行此子程序即可确保单实例。
+
+### 手动实现
+
+窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
+如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
+
+```
+步骤1: GetWindows → windowList
+步骤2: If windowList.Any() → 执行策略
+步骤3: ShowAndWaitClose → 显示新窗口（仅停止策略不需要此步）
+```
+
+#### 策略选择（按优先级）
+
+| 优先级 | 做法 | 说明 |
+|--------|------|------|
+| 1 | `sys:stop` 停止动作，沿用旧窗口 | 最简单，旧窗口继续运行 |
+| 2 | 关闭旧窗口，停止动作 | 需要刷新窗口内容 |
+| 3 | 激活旧窗口，停止新实例 | 需要保留旧窗口状态 |
+
+#### 策略一：停止动作（推荐）
+
+步骤2 IfSteps 中放 `sys:stop`，无需步骤3。
+
+### 策略二：关闭旧窗口，停止动作
+
+```json
+// 步骤1: 获取窗口列表
+{
+  "StepRunnerKey": "sys:customwindow",
+  "InputParams": {
+    "type": {"VarKey": null, "Value": "GetWindows"},
+    "windowId": {"VarKey": null, "Value": "$=_context.ActionId"},
+    "stopIfFail": {"VarKey": null, "Value": "0"}
+  },
+  "OutputParams": {
+    "isSuccess": null,
+    "windowList": "windowList",
+    "errMessage": null
+  }
+}
+// 步骤2: 关闭已有窗口并停止
+{
+  "StepRunnerKey": "sys:simpleIf",
+  "InputParams": {
+    "condition": {"VarKey": null, "Value": "$={windowList}.Any()"}
+  },
+  "IfSteps": [
+    {
+      "StepRunnerKey": "sys:assign",
+      "InputParams": {
+        "input": {"VarKey": null, "Value": "$=\r\nSystem.Windows.Window window = {windowList}[0];\r\nwindow.Dispatcher.Invoke(() => { window.Close(); });"},
+        "stopIfFail": {"VarKey": null, "Value": "1"}
+      },
+      "OutputParams": {"isSuccess": null, "output": null, "errMessage": null}
+    },
+    {
+      "StepRunnerKey": "sys:stop",
+      "InputParams": {
+        "returnType": {"VarKey": null, "Value": "none"},
+        "returnValue": {"VarKey": null, "Value": ""}
+      },
+      "OutputParams": {}
+    }
+  ]
+}
+// 步骤3: 显示新窗口（如果步骤2没有停止）
+```
+
+### 策略三：激活旧窗口，停止新实例
+
+步骤2 IfSteps 中先 assign 激活，再 `sys:stop`：
+
+```csharp
+window.Dispatcher.Invoke(() => {
+    window.Activate();
+    window.Show();
+    window.WindowState = System.Windows.WindowState.Normal;
+});
+```
+
+## 最简示例（输入框+确定按钮+Escape关闭）
+
+XAML：
+
+
+
+cscode：
+
+
 
 ## 多实例处理
 

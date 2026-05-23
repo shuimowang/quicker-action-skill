@@ -122,7 +122,36 @@ InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Aut
 
 ## 显示文本 (`sys:showText`)
 
-InputParams：`type`（`"NO_WAIT"`）、`text`、`title`、`fontsize`、`enableEscClose`、`autoWrap`。
+InputParams：
+
+| 参数 | 说明 |
+|------|------|
+| `type` | `"NO_WAIT"` 不等待关闭 |
+| `text` | 显示的文本内容 |
+| `title` | 窗口标题 |
+| `fontsize` | 字体大小 |
+| `fontfamily` | 字体 |
+| `enableEscClose` | ESC 关闭，`"true"` / `"false"` |
+| `autoWrap` | 自动换行，`"true"` / `"false"` |
+| `topMost` | 置顶，`"true"` / `"false"` |
+| `bgColor` | 背景颜色 |
+| `textColor` | 文字颜色 |
+| `highlight` | 高亮 |
+| `showLineNum` | 显示行号，`"true"` / `"false"` |
+| `showBuildInToolbar` | 显示内置工具栏，`"true"` / `"false"` |
+| `copyWholeLine` | 点击复制整行，`"true"` / `"false"` |
+| `autoCloseKey` | 自动关闭快捷键 |
+| `closeWhenLostFocus` | 失去焦点关闭，`"true"` / `"false"` |
+| `caretPosition` | 光标位置 |
+| `winLocation` | 窗口位置 |
+| `winSize` | 窗口尺寸 |
+| `operations` | 操作 |
+| `autoSaveToState` | 自动保存到状态 |
+| `updateIfExists` | 已存在时更新，`"0"` / `"1"` |
+| `stopIfFail` | 失败停止，`"0"` / `"1"` |
+| `advancedSettings` | 高级设置 |
+
+OutputParams：`isSuccess`、`windowHandle`、`errMessage`。
 
 ---
 
