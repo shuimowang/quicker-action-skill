@@ -29,7 +29,25 @@ GetWindows + simpleIf 必须在窗口创建前执行，无法放进 cscode。
 - 复杂对象构建
 - 内置步骤无法覆盖的场景
 
-### 4. 变量最小化
+### 4. 代码可读性
+
+JSON 字符串中嵌入的 XAML、C# 代码必须用 `\n` 换行 + 缩进，不能挤成一行。
+
+- **XAML**：每个属性独立一行或合理换行，子元素缩进 4 空格，添加注释分组（如 `<!-- 标题栏 -->`）
+- **C# 代码**：保持正常代码格式，语句换行、花括号缩进
+- **cscode** 已经用 `\n` 的保持不变；XAML 同样用 `\n` 而非拼成一行
+
+**反面教材：**
+```
+"Value": "<Window xmlns=\"...\" Width=\"300\" Height=\"360\" WindowStyle=\"None\"><Grid><Grid.RowDefinitions><RowDefinition Height=\"28\"/><RowDefinition Height=\"*\"/></Grid.RowDefinitions>..."
+```
+
+**正确做法：**
+```
+"Value": "<Window xmlns=\"...\"\n        Width=\"300\" Height=\"360\"\n        WindowStyle=\"None\">\n    <Grid>\n        <Grid.RowDefinitions>\n            <RowDefinition Height=\"28\"/>\n            <RowDefinition Height=\"*\"/>\n        </Grid.RowDefinitions>\n..."
+```
+
+### 5. 变量最小化
 
 - 不需要在步骤间传递的数据，用 cscode 局部变量（`static` 字段）
 - 需要跨步骤传递的才定义为动作变量
@@ -69,8 +87,14 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 
 - 必须有 `OnWindowCreated`
 - C# 5.0 语法：无 `$""`、无 `?.`、无 `=>` 表达式体
-- 命名空间冲突必须全限定：`System.Windows.Controls.Image`、`System.Windows.Shapes.Rectangle`、`System.Drawing.Bitmap`
-- 不要同时 import `System.Drawing` 和 `System.Windows.Controls`/`System.Windows.Shapes` 而不加限定
+- **命名空间冲突检查（写 cscode 前必须核对）：** Quicker 自动注入 `System.Windows`、`System.Windows.Forms`、`System.Drawing`、`System.IO`、`System.Windows.Shapes`，以下类型必须写全限定名：
+  - `Path` → `System.IO.Path`（文件路径）或 `System.Windows.Shapes.Path`（图形）
+  - `Image` → `System.Windows.Controls.Image` 或 `System.Drawing.Image`
+  - `Rectangle` → `System.Windows.Shapes.Rectangle` 或 `System.Drawing.Rectangle`
+  - `Point` → `System.Windows.Point` 或 `System.Drawing.Point`
+  - `Bitmap` → `System.Drawing.Bitmap`
+  - 其他冲突类型详见 [C# 规则 - 命名空间冲突](csharp-rules.md#c-命名空间冲突最高频错误)
+- **只要代码中同时出现两组命名空间的类型，所有有歧义的类型一律写全名，不要依赖短名称**
 
 ### 通知方式
 
@@ -153,12 +177,13 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 
 ### C# 代码
 - [ ] 无 C# 5.0 禁止语法（`$""`、`?.`、`=>` 表达式体、`nameof()`）
-- [ ] 命名空间冲突已全限定（Image、Rectangle、Bitmap、Point、Path）
+- [ ] 命名空间冲突已全限定 — Quicker 自动注入 `System.IO` + `System.Windows.Shapes`，所以 `Path` 必须写 `System.IO.Path`；同理 `Image`、`Rectangle`、`Point`、`Bitmap` 等有歧义的类型一律写全名
 - [ ] 无重复 `using` 声明
 - [ ] Bitmap 变量用 `System.Drawing.Bitmap`，不用 `BitmapSource`
 - [ ] Clipboard.GetImage() 返回的 BitmapSource 存入变量前已转换
 
 ### 设计
+- [ ] JSON 字符串中的 XAML / C# 代码已用 `\n` 换行缩进，非挤成一行
 - [ ] 能在 cscode 做的事没有拆成额外步骤
 - [ ] 变量数量最小化（只定义需要跨步骤传递的）
 - [ ] 没有多余的 csscript 步骤
