@@ -10,14 +10,17 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 ## 使用方式
 
 用户会描述想要的动作功能，你需要：
-1. 理解需求，设计动作的步骤流程
-2. 生成符合 Quicker 格式的 JSON
-3. 保存为 `.json` 文件到用户指定的位置（当前工作目录）
+1. **开始前：通读 [动作编写规范](references/action-spec.md)**
+2. 理解需求，设计动作的步骤流程
+3. 生成符合 Quicker 格式的 JSON
+4. 保存为 `.json` 文件到用户指定的位置（当前工作目录）
+5. **完成后：按 [动作编写规范](references/action-spec.md) 复查清单逐条检查**
 
 ## 参考文档
 
 生成动作时，按需查阅以下参考：
 
+- **[动作编写规范](references/action-spec.md)** — 设计原则、CustomWindow 规范、变量类型对照、复查清单（**必读**）
 - [JSON 结构](references/json-structure.md) — 顶层结构、Data、Variables、VarType、步骤、图标、子程序、参数引用
 - [模块定义](references/modules.md) — 所有 StepRunnerKey 的 InputParams/OutputParams
 - [多字段表单](references/form.md) — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
@@ -80,7 +83,7 @@ B. [选项]
 
 ## 生成规则
 
-0. **每次生成新动作前，必须通读一遍所有相关 references/*.md 文档** — 不读不动手，不凭记忆写代码
+0. **每次生成新动作前，必须通读 [动作编写规范](references/action-spec.md) 和相关 references/*.md 文档** — 不读不动手，不凭记忆写代码
 1. `Data` 字段必须是 JSON 字符串（需要转义）
 2. 按实现优先级选择方案，优先用内置模块和表达式
 3. C# 脚本通过 `context.GetVarValue()` / `context.SetVarValue()` 访问变量
@@ -90,6 +93,6 @@ B. [选项]
 7. 如果不需要 C# 回调，`cscode` 设为空字符串
 8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
 9. 涉及配置维护优先考虑 `sys:form`，操作集合用 `sys:custompanel`，复杂交互才用 `sys:customwindow`
-10. 生成后必须通过 [自检清单](references/checklist.md) 逐条验证
+10. 生成后必须通过 [动作编写规范 - 复查清单](references/action-spec.md#复查清单) 逐条验证
 
 $ARGUMENTS
