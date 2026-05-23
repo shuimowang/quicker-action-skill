@@ -144,8 +144,6 @@ C# 脚本中读写变量必须用正确的 .NET 类型：
 "OutputParams": {"输出名": "变量名"}
 ```
 
-### 每个 Step 必须有 `Id`（GUID 字符串）
-
 ### 顶层字段必须完整
 
 ActionType=24，包含全部字段：Row, Col, ActionType, Title, Description, Icon, Path, DelayMs, Data, Data2, Data3, Children, Id, TemplateId, TemplateRevision, UseTemplate, LastEditTimeUtc, SharedActionId, ShareTimeUtc, CreateTimeUtc, AsSubProgram, SkipWhenStopRunningActions, SkipCheckUpdate, AutoUpdate, KeepInfoWhenUpdate, MinQuickerVersion, ContextMenuData, AllowScrollTrigger, EnableEvaluateVariable, IsTextProcessor, IsImageProcessor, Association, DoNotClosePanel, UserLimitation
@@ -164,7 +162,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 - [ ] ActionType = 24
 - [ ] 顶层字段完整（34 个）
 - [ ] Data 是合法的 JSON 字符串
-- [ ] 每个 Step 有 Id
 - [ ] 每个 Variable 字段完整
 - [ ] InputParams / OutputParams 是字典，不是数组
 
@@ -201,7 +198,7 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
   "Row": 0, "Col": 0, "ActionType": 24,
   "Title": "文本计数", "Description": "统计选中文本的字符数",
   "Icon": "fa:Solid_Font", "Path": null, "DelayMs": 0,
-  "Data": "{\"LimitSingleInstance\":false,\"SummaryExpression\":\"$$\",\"SubPrograms\":[],\"Variables\":[{\"Key\":\"config\",\"IsLocked\":false,\"Type\":10,\"Desc\":\"配置\",\"DefaultValue\":\"json:{\\\"ShowResult\\\":true}\",\"SaveState\":true,\"IsInput\":false,\"IsOutput\":false,\"ParamName\":\"\",\"InputParamInfo\":null,\"OutputParamInfo\":null,\"TableDef\":null,\"CustomType\":null,\"Group\":\"设置\"}],\"Steps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000001\",\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={quicker_in_param}==\\\"Settings\\\"\"}},\"OutputParams\":{},\"IfSteps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000002\",\"StepRunnerKey\":\"sys:form\",\"InputParams\":{\"operation\":{\"VarKey\":null,\"Value\":\"dict\"},\"dictVar\":{\"VarKey\":\"config\",\"Value\":null},\"title\":{\"VarKey\":null,\"Value\":\"设置\"},\"formForDictDef\":{\"VarKey\":null,\"Value\":\"{\\\"Fields\\\":[{\\\"FieldKey\\\":\\\"ShowResult\\\",\\\"DictVarType\\\":2,\\\"Label\\\":\\\"显示结果\\\",\\\"InputMethod\\\":6}]}\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"0\"}},\"OutputParams\":{\"isSuccess\":null,\"button\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"编辑配置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000003\",\"StepRunnerKey\":\"sys:stop\",\"InputParams\":{\"method\":{\"VarKey\":null,\"Value\":\"default\"},\"isError\":{\"VarKey\":null,\"Value\":\"0\"},\"return\":{\"VarKey\":null,\"Value\":\"\"},\"showMessage\":{\"VarKey\":null,\"Value\":\"\"}},\"OutputParams\":{},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"设置完直接结束\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"右键菜单→设置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000004\",\"StepRunnerKey\":\"sys:getSelectedText\",\"InputParams\":{\"format\":{\"VarKey\":null,\"Value\":\"UnicodeText\"},\"waitMs\":{\"VarKey\":null,\"Value\":\"500\"},\"trim\":{\"VarKey\":null,\"Value\":\"1\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"selectedText\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"获取选中文本\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000005\",\"StepRunnerKey\":\"sys:assign\",\"InputParams\":{\"input\":{\"VarKey\":null,\"Value\":\"$={selectedText}.Length\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"charCount\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"计算字符数\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000006\",\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={config}[\\\"ShowResult\\\"]\"}},\"OutputParams\":{},\"IfSteps\":[{\"Id\":\"a1b2c3d4-0001-0001-0001-000000000007\",\"StepRunnerKey\":\"sys:showText\",\"InputParams\":{\"type\":{\"VarKey\":null,\"Value\":\"NO_WAIT\"},\"text\":{\"VarKey\":null,\"Value\":\"$$字符数：{charCount}\"},\"title\":{\"VarKey\":null,\"Value\":\"计数结果\"},\"closeWhenLostFocus\":{\"VarKey\":null,\"Value\":\"true\"},\"winLocation\":{\"VarKey\":null,\"Value\":\"CenterScreen\"}},\"OutputParams\":{\"isSuccess\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"显示结果\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"根据配置决定是否显示\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ContextMenuData\":\"[fa:Light_Cogs:#00A0D8]设置|Settings\"}",
+  "Data": "{\"LimitSingleInstance\":false,\"SummaryExpression\":\"$$\",\"SubPrograms\":[],\"Variables\":[{\"Key\":\"config\",\"IsLocked\":false,\"Type\":10,\"Desc\":\"配置\",\"DefaultValue\":\"json:{\\\"ShowResult\\\":true}\",\"SaveState\":true,\"IsInput\":false,\"IsOutput\":false,\"ParamName\":\"\",\"InputParamInfo\":null,\"OutputParamInfo\":null,\"TableDef\":null,\"CustomType\":null,\"Group\":\"设置\"}],\"Steps\":[{\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={quicker_in_param}==\\\"Settings\\\"\"}},\"OutputParams\":{},\"IfSteps\":[{\"StepRunnerKey\":\"sys:form\",\"InputParams\":{\"operation\":{\"VarKey\":null,\"Value\":\"dict\"},\"dictVar\":{\"VarKey\":\"config\",\"Value\":null},\"title\":{\"VarKey\":null,\"Value\":\"设置\"},\"formForDictDef\":{\"VarKey\":null,\"Value\":\"{\\\"Fields\\\":[{\\\"FieldKey\\\":\\\"ShowResult\\\",\\\"DictVarType\\\":2,\\\"Label\\\":\\\"显示结果\\\",\\\"InputMethod\\\":6}]}\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"0\"}},\"OutputParams\":{\"isSuccess\":null,\"button\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"编辑配置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"StepRunnerKey\":\"sys:stop\",\"InputParams\":{\"method\":{\"VarKey\":null,\"Value\":\"default\"},\"isError\":{\"VarKey\":null,\"Value\":\"0\"},\"return\":{\"VarKey\":null,\"Value\":\"\"},\"showMessage\":{\"VarKey\":null,\"Value\":\"\"}},\"OutputParams\":{},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"设置完直接结束\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"右键菜单→设置\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"StepRunnerKey\":\"sys:getSelectedText\",\"InputParams\":{\"format\":{\"VarKey\":null,\"Value\":\"UnicodeText\"},\"waitMs\":{\"VarKey\":null,\"Value\":\"500\"},\"trim\":{\"VarKey\":null,\"Value\":\"1\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"selectedText\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"获取选中文本\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"StepRunnerKey\":\"sys:assign\",\"InputParams\":{\"input\":{\"VarKey\":null,\"Value\":\"$={selectedText}.Length\"},\"stopIfFail\":{\"VarKey\":null,\"Value\":\"1\"}},\"OutputParams\":{\"isSuccess\":null,\"output\":\"charCount\",\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"计算字符数\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0},{\"StepRunnerKey\":\"sys:simpleIf\",\"InputParams\":{\"condition\":{\"VarKey\":null,\"Value\":\"$={config}[\\\"ShowResult\\\"]\"}},\"OutputParams\":{},\"IfSteps\":[{\"StepRunnerKey\":\"sys:showText\",\"InputParams\":{\"type\":{\"VarKey\":null,\"Value\":\"NO_WAIT\"},\"text\":{\"VarKey\":null,\"Value\":\"$$字符数：{charCount}\"},\"title\":{\"VarKey\":null,\"Value\":\"计数结果\"},\"closeWhenLostFocus\":{\"VarKey\":null,\"Value\":\"true\"},\"winLocation\":{\"VarKey\":null,\"Value\":\"CenterScreen\"}},\"OutputParams\":{\"isSuccess\":null,\"errMessage\":null},\"IfSteps\":null,\"ElseSteps\":null,\"Note\":\"显示结果\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ElseSteps\":null,\"Note\":\"根据配置决定是否显示\",\"Disabled\":false,\"Collapsed\":false,\"DelayMs\":0}],\"ContextMenuData\":\"[fa:Light_Cogs:#00A0D8]设置|Settings\"}",
   "Data2": null, "Data3": null, "Children": null,
   "Id": "a1b2c3d4-e5f6-7890-abcd-000000000001",
   "TemplateId": null, "TemplateRevision": 0, "UseTemplate": false,
@@ -234,7 +231,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
   ],
   "Steps": [
     {
-      "Id": "a1b2c3d4-0001-0001-0001-000000000001",
       "StepRunnerKey": "sys:simpleIf",
       "InputParams": {
         "condition": {"VarKey": null, "Value": "$={quicker_in_param}==\"Settings\""}
@@ -242,7 +238,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
       "OutputParams": {},
       "IfSteps": [
         {
-          "Id": "a1b2c3d4-0001-0001-0001-000000000002",
           "StepRunnerKey": "sys:form",
           "InputParams": {
             "operation": {"VarKey": null, "Value": "dict"},
@@ -255,7 +250,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
           "Note": "编辑配置"
         },
         {
-          "Id": "a1b2c3d4-0001-0001-0001-000000000003",
           "StepRunnerKey": "sys:stop",
           "InputParams": {
             "method": {"VarKey": null, "Value": "default"},
@@ -270,7 +264,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
       "Note": "右键菜单→设置"
     },
     {
-      "Id": "a1b2c3d4-0001-0001-0001-000000000004",
       "StepRunnerKey": "sys:getSelectedText",
       "InputParams": {
         "format": {"VarKey": null, "Value": "UnicodeText"},
@@ -282,7 +275,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
       "Note": "获取选中文本"
     },
     {
-      "Id": "a1b2c3d4-0001-0001-0001-000000000005",
       "StepRunnerKey": "sys:assign",
       "InputParams": {
         "input": {"VarKey": null, "Value": "$={selectedText}.Length"},
@@ -292,7 +284,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
       "Note": "计算字符数"
     },
     {
-      "Id": "a1b2c3d4-0001-0001-0001-000000000006",
       "StepRunnerKey": "sys:simpleIf",
       "InputParams": {
         "condition": {"VarKey": null, "Value": "$={config}[\"ShowResult\"]"}
@@ -300,7 +291,6 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
       "OutputParams": {},
       "IfSteps": [
         {
-          "Id": "a1b2c3d4-0001-0001-0001-000000000007",
           "StepRunnerKey": "sys:showText",
           "InputParams": {
             "type": {"VarKey": null, "Value": "NO_WAIT"},
