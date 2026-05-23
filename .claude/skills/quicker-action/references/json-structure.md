@@ -251,21 +251,6 @@ public enum VarType
 }
 ```
 
-| 值 | 名称 | 说明 |
-|----|------|------|
-| 0 | Text | 文本 |
-| 1 | Number | 数字(小数) |
-| 2 | Boolean | 布尔(是否) |
-| 3 | Image | 图片 |
-| 4 | List | 文本列表 |
-| 6 | DateTime | 时间日期 |
-| 10 | Dict | 词典 |
-| 11 | Form | 表单 |
-| 12 | Integer | 数字(整数) |
-| 13 | Table | 表格 |
-| 98 | Object | 对象 |
-| 99 | Any | 任意类型 |
-
 ## 步骤基础结构
 
 对应类型：`Quicker.Domain.Actions.X.ActionStep`
