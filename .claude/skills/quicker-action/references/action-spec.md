@@ -87,12 +87,10 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 
 - 必须有 `OnWindowCreated`
 - C# 5.0 语法限制详见 [C# 规则 - C# 5.0 禁止使用的语法](csharp-rules.md#c-50-禁止使用的语法cscode-和-csscript-均适用)
-- **命名空间冲突检查（写 cscode 前必须核对）：** Quicker 自动注入 `System.Windows`、`System.Windows.Forms`、`System.Drawing`、`System.IO`、`System.Windows.Shapes`，以下类型必须写全限定名：
-  - `Path` → `System.IO.Path`（文件路径）或 `System.Windows.Shapes.Path`（图形）
-  - `Image` → `System.Windows.Controls.Image` 或 `System.Drawing.Image`
-  - `Rectangle` → `System.Windows.Shapes.Rectangle` 或 `System.Drawing.Rectangle`
+- **命名空间冲突检查（写 cscode 前必须核对）：** cscode 是完整 C# 代码，有 `using` 开头，多个命名空间同时引入时同名类型会冲突。常见冲突类型：
   - `Point` → `System.Windows.Point` 或 `System.Drawing.Point`
   - `Bitmap` → `System.Drawing.Bitmap`
+  - `Image` → `System.Windows.Controls.Image` 或 `System.Drawing.Image`
   - 其他冲突类型详见 [C# 规则 - 命名空间冲突](csharp-rules.md#c-命名空间冲突最高频错误)
 - **只要代码中同时出现两组命名空间的类型，所有有歧义的类型一律写全名，不要依赖短名称**
 
@@ -174,7 +172,7 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 
 ### C# 代码
 - [ ] 无 C# 5.0 禁止语法（`$""`、`?.`、`=>` 表达式体、`nameof()`）
-- [ ] 命名空间冲突已全限定 — Quicker 自动注入 `System.IO` + `System.Windows.Shapes`，所以 `Path` 必须写 `System.IO.Path`；同理 `Image`、`Rectangle`、`Point`、`Bitmap` 等有歧义的类型一律写全名
+- [ ] 命名空间冲突已全限定 — cscode/csscript 有 `using` 开头，多命名空间同时引入时同名类型会冲突，有歧义的类型（`Point`、`Bitmap`、`Image` 等）一律写全名
 - [ ] 无重复 `using` 声明
 - [ ] Bitmap 变量用 `System.Drawing.Bitmap`，不用 `BitmapSource`
 - [ ] Clipboard.GetImage() 返回的 BitmapSource 存入变量前已转换

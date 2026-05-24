@@ -275,7 +275,9 @@ context.SetVarValue("task", task);
 
 ## C# 命名空间冲突（最高频错误）
 
-Quicker 自动注入的 using 包含 `System.Windows`、`System.Windows.Forms`、`System.Drawing`、`System.IO`、`System.Windows.Shapes`，以下类型**必须写全限定名**：
+命名冲突只出现在 **cscode / csscript**（完整 C# 代码）中，因为有 `using` 开头，多个命名空间同时引入时同名类型会冲突。赋值环境（`$=` 表达式）是简单代码片段，不会有命名冲突。
+
+以下类型在 cscode/csscript 中**必须写全限定名**：
 
 | 简写 | 冲突 | 正确写法 |
 |------|------|----------|
