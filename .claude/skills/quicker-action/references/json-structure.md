@@ -251,6 +251,7 @@ string Group                                            // 分组
 | VarType | 名称 | .NET 类型 |
 |---------|------|-----------|
 | 3 | Bitmap | `System.Drawing.Bitmap` |
+| 4 | List | `List<string>` |
 | 10 | Dict | `System.Collections.Generic.Dictionary<string, object>` |
 | 13 | Table | `System.Data.DataTable` |
 
