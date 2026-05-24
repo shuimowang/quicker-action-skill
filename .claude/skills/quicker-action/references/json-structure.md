@@ -254,6 +254,8 @@ string Group                                            // 分组
 | 4 | List | `List<string>` |
 | 10 | Dict | `System.Collections.Generic.Dictionary<string, object>` |
 | 13 | Table | `System.Data.DataTable` |
+| 98 | Object | `object` |
+| 99 | Any | 动态类型（相当于 `var`，运行时确定具体类型） |
 
 C# 脚本中读写这些变量时需用对应的 .NET 类型。例如 Bitmap 变量不能直接用 WPF 的 `BitmapSource`，需先转换。
 
