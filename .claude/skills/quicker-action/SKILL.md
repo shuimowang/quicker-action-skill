@@ -22,7 +22,7 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 
 - **[动作编写规范](references/action-spec.md)** — 设计原则、CustomWindow 规范、变量类型对照、复查清单（**必读**）
 - [JSON 结构](references/json-structure.md) — 顶层结构、Data、Variables、VarType、步骤、图标、子程序、参数引用
-- [模块定义](references/modules.md) — 所有 StepRunnerKey 的 InputParams/OutputParams
+- [模块定义](references/modules.md) — 常用 StepRunnerKey 的 InputParams/OutputParams（未覆盖所有步骤，分析动作时遇到未记载的步骤需推断或询问用户）
 - [多字段表单](references/form.md) — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
 - [自定义窗口](references/customwindow.md) — XAML、cscode 回调、数据映射、进阶用法
 - [C# 规则](references/csharp-rules.md) — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL、变量语法、XAML 规则、性能
