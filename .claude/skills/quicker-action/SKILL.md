@@ -97,15 +97,52 @@ B. [选项]
 10. 生成后必须通过 [动作编写规范 - 复查清单](references/action-spec.md#复查清单) 逐条验证
 11. **生成后自动导入：** 使用 QuickerStarter.exe 调用导入动作，无需用户手动操作
 
-## 生成后导入
+## Skill 与 Quicker 通信
 
-生成动作 JSON 后，通过 QuickerStarter.exe 调用导入动作实现自动导入：
+通过通信动作实现 skill 与 Quicker 的交互（创建、更新、查询、调试动作）。
+
+**通信动作 ID：** `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
+
+### 命令格式
 
 ```powershell
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "runaction:00cd3048-813a-4759-98bb-7f5ef2931c50 动作JSON文件路径"
+# 创建新动作（自动分配位置，返回新动作ID）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 create:文件路径`""
+
+# 更新已有动作（按JSON中的ID匹配）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 update:文件路径`""
+
+# 查询动作信息（按ID或名称，返回JSON文件路径）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 info:动作ID或名称`""
+
+# 调试运行动作
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 debug:动作ID或名称`""
 ```
 
-**导入动作 ID：** `00cd3048-813a-4759-98bb-7f5ef2931c50`
+### 使用场景
+
+| 场景 | 命令 | 说明 |
+|------|------|------|
+| **生成后创建** | `create:文件路径` | 新动作，自动找空位安装 |
+| **生成后更新** | `update:文件路径` | 已有动作，按ID更新 |
+| **查询现有动作** | `info:动作ID或名称` | 导出JSON供分析 |
+| **测试动作** | `debug:动作ID或名称` | 调试运行，返回结果 |
+
+### 返回值
+
+通过 `-c` 参数获取 stdout 返回值：
+- `create` → `已安装，动作Id：xxx`
+- `update` → `更新成功`
+- `info` → JSON文件路径 或 `未找到动作`
+- `debug` → `调试完成，未报错` 或 `调试报错：xxx`
+
+### 辅助导入动作
+
+另有专用导入动作（无返回值）：`00cd3048-813a-4759-98bb-7f5ef2931c50`
+
+```powershell
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "runaction:00cd3048-813a-4759-98bb-7f5ef2931c50 文件路径"
+```
 
 ## 外部启动参考
 
