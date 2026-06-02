@@ -148,6 +148,31 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 - `info` → JSON文件路径 或 `未找到动作`
 - `debug` → `调试完成，未报错` 或 `调试报错：xxx`
 
+### 验证流程（必须）
+
+创建动作后必须验证，确保数据正确：
+
+```
+1. create: 文件路径 → 获取新动作ID
+2. info: 新动作ID → 获取导出的JSON文件路径
+3. 读取导出的JSON，与原始数据比较
+4. 如果严重不符：
+   a. 查阅文档找出问题
+   b. 修复JSON文件
+   c. update: 文件路径 → 更新动作
+```
+
+**比较要点：**
+- ActionType 是否为 24
+- Steps 的 StepRunnerKey 是否正确
+- InputParams 参数名是否正确（如 `script` 不是 `code`）
+- OutputParams 参数名是否正确（如 `rtn` 不是 `result`）
+- 变量 Key 和 Type 是否正确
+
+**Why:** Quicker 导入可能静默失败或丢失字段，验证可及时发现问题并修复。
+
+**How to apply:** 每次 create 后立即 info 查询验证，不通过则修复后 update。
+
 ### 辅助导入动作
 
 另有专用导入动作（无返回值）：`00cd3048-813a-4759-98bb-7f5ef2931c50`
