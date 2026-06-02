@@ -174,14 +174,6 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 **How to apply:** 每次 create 或 update 后立即 info 查询验证，不通过则修复后重新 update，循环直到正确。
 
-### 辅助导入动作
-
-另有专用导入动作（无返回值）：`00cd3048-813a-4759-98bb-7f5ef2931c50`
-
-```powershell
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "runaction:00cd3048-813a-4759-98bb-7f5ef2931c50 文件路径"
-```
-
 ## 外部启动参考
 
 详见 [Quicker 外部启动文档](https://getquicker.net/kc/manual/doc/quicker-starter)
