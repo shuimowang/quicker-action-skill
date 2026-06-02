@@ -80,7 +80,6 @@ quicker-action-skill/
 | `sys:group` | 步骤组 |
 | `sys:subprogram` | 子程序调用 |
 | `sys:getSelectedText` | 获取选中文本 |
-| `sys:translation` | 翻译 |
 | `sys:showText` | 显示文本 |
 | `sys:notify` | 通知提示 |
 
