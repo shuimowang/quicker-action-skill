@@ -103,6 +103,18 @@ B. [选项]
 
 **通信动作 ID：** `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
 
+### 数据交换目录
+
+```
+{MyDocuments}\Quicker\kkj.quicker.action\
+└── exports\          ← info 命令导出的 JSON 存放于此
+```
+
+- `{MyDocuments}` = `Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)`
+- 通信动作自动管理此目录（不存在会自动创建）
+- `info:` 命令导出动作到 `exports/动作名_ID.json`
+- `create:` / `update:` 从指定路径读取 JSON（不限于此目录）
+
 ### 命令格式
 
 ```powershell
