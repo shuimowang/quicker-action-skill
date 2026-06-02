@@ -148,6 +148,8 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 - `info` → JSON文件路径 或 `未找到动作`
 - `debug` → `调试完成，未报错` 或 `调试报错：xxx`
 
+**故障排除：** 如果调用通信动作一直没有返回值，说明该动作未安装。请提示用户先安装通信动作 `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`。
+
 ### 验证流程（必须）
 
 **每次导入动作（create 或 update）后都必须验证：**
