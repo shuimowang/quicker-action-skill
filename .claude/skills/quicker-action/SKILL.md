@@ -95,5 +95,50 @@ B. [选项]
 8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
 9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 [动作编写规范 - 复查清单](references/action-spec.md#复查清单) 逐条验证
+11. **生成后自动导入：** 使用 QuickerStarter.exe 调用导入动作，无需用户手动操作
+
+## 生成后导入
+
+生成动作 JSON 后，通过 QuickerStarter.exe 调用导入动作实现自动导入：
+
+```powershell
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "runaction:00cd3048-813a-4759-98bb-7f5ef2931c50 动作JSON文件路径"
+```
+
+**导入动作 ID：** `00cd3048-813a-4759-98bb-7f5ef2931c50`
+
+## 外部启动参考
+
+详见 [Quicker 外部启动文档](https://getquicker.net/kc/manual/doc/quicker-starter)
+
+### 命令行调用
+
+```powershell
+# 基本格式
+"C:\Program Files\Quicker\QuickerStarter.exe" runaction:动作ID
+
+# 传递参数（问号分隔）
+"C:\Program Files\Quicker\QuickerStarter.exe" runaction:动作ID?参数内容
+
+# 获取返回值（-c 等待20秒，-c数字 指定超时秒数）
+"C:\Program Files\Quicker\QuickerStarter.exe" -c "runaction:动作ID 参数"
+```
+
+### URI 协议调用
+
+```
+quicker:runaction:动作ID
+quicker:runaction:动作名称?参数
+```
+
+可在 Win+R、网页链接、快捷方式中使用。
+
+### 动作标识方式
+
+- **动作ID**：UUID格式，如 `00cd3048-813a-4759-98bb-7f5ef2931c50`
+- **动作名称**：直接写名称（需唯一）
+- **动作库ID**：从动作库安装的ID
+
+获取动作ID：动作右键 → 信息 → 复制动作ID或URI
 
 $ARGUMENTS
