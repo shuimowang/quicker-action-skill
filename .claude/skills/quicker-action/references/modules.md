@@ -114,12 +114,6 @@ InputParams：`format`（`"UnicodeText"` 等）、`waitMs`、`trim`、`stopIfFai
 
 ---
 
-## 翻译 (`sys:translation`)
-
-InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Auto"` 等）、`vendor`（`"Baidu"` 等）。OutputParams：`resultText`。
-
----
-
 ## 显示文本 (`sys:showText`)
 
 InputParams：
