@@ -150,16 +150,17 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 ### 验证流程（必须）
 
-创建动作后必须验证，确保数据正确：
+**每次导入动作（create 或 update）后都必须验证：**
 
 ```
-1. create: 文件路径 → 获取新动作ID
-2. info: 新动作ID → 获取导出的JSON文件路径
+1. create/update: 文件路径 → 获取结果
+2. info: 动作ID → 获取导出的JSON文件路径
 3. 读取导出的JSON，与原始数据比较
 4. 如果严重不符：
    a. 查阅文档找出问题
    b. 修复JSON文件
    c. update: 文件路径 → 更新动作
+   d. 再次 info 验证直到正确
 ```
 
 **比较要点：**
@@ -171,7 +172,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 **Why:** Quicker 导入可能静默失败或丢失字段，验证可及时发现问题并修复。
 
-**How to apply:** 每次 create 后立即 info 查询验证，不通过则修复后 update。
+**How to apply:** 每次 create 或 update 后立即 info 查询验证，不通过则修复后重新 update，循环直到正确。
 
 ### 辅助导入动作
 
