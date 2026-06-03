@@ -305,7 +305,7 @@ if ({number1} > {number2})
 
 ### 内置对象
 
-表达式和 C# 步骤中可直接使用，详细说明见 [C# 规则 - 内置变量](csharp-rules.md#内置变量_context_eval_qk)。
+**仅在表达式（`$=`）中可直接使用**，C# 脚本步骤用 `Exec` 的 `context` 参数。详细说明见 [C# 规则 - 内置变量](csharp-rules.md#内置变量_context_eval_qk)。
 
 - `_context` — 动作上下文（`ActionExecuteContext`），可调用 `GetVarValue`/`SetVarValue`/`RunSp`/`WriteState`/`ReadCache` 等
 - `_eval` — 表达式引擎（`EvalContext`），可注册自定义 DLL（`_eval.RegisterAssembly`）、注册方法、注册变量
