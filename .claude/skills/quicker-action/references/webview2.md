@@ -530,7 +530,7 @@ var value = $quickerSync.getDictItemValue("dict", "c");
 
 ### 调用子程序（v1.23.15+）
 
-**推荐方式：**
+**必须用 `$quickerSp` 异步方式（已验证可用）：**
 ```javascript
 async function callSubprogram() {
     var input = { inputParam1: "Hello", inputParam2: 3 };
@@ -539,24 +539,27 @@ async function callSubprogram() {
 }
 ```
 
-- `spName`：子程序名称
-- `dataObj`：输入参数对象（键名对应子程序输入变量名）
+- `spName`：子程序名称（对应子程序定义中的 `Name` 字段）
+- `dataObj`：输入参数对象（键名对应子程序输入变量的 `ParamName`）
 - 输入和输出均为**对象类型**
+- 调用处必须用 `async function` + `await`
 
-**旧方式（不推荐）：**
+> **⚠️ `$quickerSync.subprogram` 在 WebView2 中不工作！**
+> 同步方式的 `$quickerSync.subprogram("name", params)` 在 WebView2 直接加载 HTML 时调用无效（静默失败，不返回结果也不报错）。必须使用 `$quickerSp` 异步方式。
+
+**旧方式（不推荐，WebView2 中不工作）：**
 ```javascript
+// ❌ 在 WebView2 中静默失败，不要使用
+$quickerSync.subprogram("子程序名", {input: "value"});
+
+// ❌ 旧回调方式，同样不推荐
 await $quicker.subprogram(
     "子程序名",
     JSON.stringify(inputParam),
     false,
-    (success, data) => {
-        if (success) { alert(data); }
-        else { alert("error:" + data); }
-    }
+    (success, data) => { }
 );
 ```
-
-> **重要：** 进行复杂操作时，请使用异步调用方式，同步调用可能导致 UI 死锁。
 
 ### 网页端监听消息
 
