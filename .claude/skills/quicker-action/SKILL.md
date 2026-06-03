@@ -1,15 +1,70 @@
 ---
 name: quicker-action
-description: Generate Quicker action JSON files for Claude Code, including Quicker step modules, variables, subprograms, C# scripts, Python scripts, forms, and CustomWindow XAML/C#.
+description: Generate, analyze, and modify Quicker action JSON files for Claude Code, including Quicker step modules, variables, subprograms, C# scripts, Python scripts, forms, and CustomWindow XAML/C#.
 ---
 
 # Quicker 动作生成器
 
-根据用户的需求，生成 Quicker 组合动作的 JSON 文件。
+根据用户的需求，生成、分析、修改 Quicker 组合动作的 JSON 文件。
 
-## 使用方式
+## 分析/修改已有动作
 
-用户会描述想要的动作功能，你需要：
+当用户要求"分析"、"查看"、"修改"某个已有动作时，**必须先用通信动作查询**，不要假设要新建。
+
+**流程：**
+1. 用通信动作 `info:动作名或ID` 查询，获取导出的 JSON 文件路径
+2. 读取 JSON 文件，分析现有实现
+3. 基于分析结果给出建议或执行修改
+
+### 通信动作
+
+- **动作 ID：** `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
+- **数据交换目录：** `{MyDocuments}\Quicker\kkj.quicker.action\exports\`
+
+**命令格式（PowerShell）：**
+```powershell
+# 查询动作信息（按ID或名称，返回JSON文件路径）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 info:动作ID或名称`"" -NoNewWindow -Wait -RedirectStandardOutput "输出文件路径"
+Get-Content "输出文件路径"
+
+# 创建新动作（自动分配位置，返回新动作ID）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 create:文件路径`""
+
+# 更新已有动作（按JSON中的ID匹配）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 update:文件路径`""
+
+# 调试运行动作
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 debug:动作ID或名称`""
+```
+
+**使用场景：**
+
+| 场景 | 命令 | 说明 |
+|------|------|------|
+| 分析/查看已有动作 | `info:动作名或ID` | 导出 JSON 到 exports 目录 |
+| 生成新动作后导入 | `create:文件路径` | 自动分配位置 |
+| 修改已有动作后更新 | `update:文件路径` | 按 JSON 中的 ID 匹配 |
+| 测试动作是否正常 | `debug:动作名或ID` | 运行动作并检查报错 |
+
+**返回值（通过 -c 获取 stdout）：**
+
+| 命令 | 返回值 |
+|------|--------|
+| `info` | JSON文件路径 或 `未找到动作` |
+| `create` | `已安装，动作Id：xxx` |
+| `update` | `更新成功` |
+| `debug` | `调试完成，未报错` 或 `调试报错：xxx` |
+
+**故障排除：**
+- 无返回值 → 检查 QuickerStarter.exe 路径是否正确，或通信动作是否已安装
+- `未找到动作` → 确认动作名称或 ID 是否正确
+- 路径含空格时需用引号包裹
+
+详见 [通信动作](references/communication-action.md)。
+
+## 生成新动作
+
+用户描述想要的动作功能时：
 1. **开始前：通读 [动作编写规范](references/action-spec.md)**
 2. 理解需求，设计动作的步骤流程
 3. 生成符合 Quicker 格式的 JSON
@@ -21,10 +76,12 @@ description: Generate Quicker action JSON files for Claude Code, including Quick
 生成动作时，按需查阅以下参考：
 
 - **[动作编写规范](references/action-spec.md)** — 设计原则、CustomWindow 规范、变量类型对照、复查清单（**必读**）
+- [通信动作](references/communication-action.md) — 动作的创建/更新/查询/调试（**分析已有动作必读**）
 - [JSON 结构](references/json-structure.md) — 顶层结构、Data、Variables、VarType、步骤、图标、子程序、参数引用
-- [模块定义](references/modules.md) — 常用 StepRunnerKey 的 InputParams/OutputParams（未覆盖所有步骤，遇到未记载的步骤需结合上下文分析）
+- [模块定义](references/modules.md) — 所有 StepRunnerKey 的 InputParams/OutputParams
 - [多字段表单](references/form.md) — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
 - [自定义窗口](references/customwindow.md) — XAML、cscode 回调、数据映射、进阶用法
+- [WebView2 浏览器窗口](references/webview2.md) — 打开网址、执行 JS、发送消息、Bridge 交互、多标签页
 - [C# 规则](references/csharp-rules.md) — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL、变量语法、XAML 规则、性能
 - [网络共享子程序](references/network-subprograms.md) — 常用网络子程序列表、调用格式、版本管理
 
@@ -95,119 +152,5 @@ B. [选项]
 8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
 9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 [动作编写规范 - 复查清单](references/action-spec.md#复查清单) 逐条验证
-11. **生成后自动导入：** 使用 QuickerStarter.exe 调用导入动作，无需用户手动操作
-
-## Skill 与 Quicker 通信
-
-通过通信动作实现 skill 与 Quicker 的交互（创建、更新、查询、调试动作）。
-
-**通信动作 ID：** `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
-
-### 数据交换目录
-
-```
-{MyDocuments}\Quicker\kkj.quicker.action\
-└── exports\          ← info 命令导出的 JSON 存放于此
-```
-
-- `{MyDocuments}` = `Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)`
-- 通信动作自动管理此目录（不存在会自动创建）
-- `info:` 命令导出动作到 `exports/动作名_ID.json`
-- `create:` / `update:` 从指定路径读取 JSON（不限于此目录）
-
-### 命令格式
-
-```powershell
-# 创建新动作（自动分配位置，返回新动作ID）
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 create:文件路径`""
-
-# 更新已有动作（按JSON中的ID匹配）
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 update:文件路径`""
-
-# 查询动作信息（按ID或名称，返回JSON文件路径）
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 info:动作ID或名称`""
-
-# 调试运行动作
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 debug:动作ID或名称`""
-```
-
-### 使用场景
-
-| 场景 | 命令 | 说明 |
-|------|------|------|
-| **生成后创建** | `create:文件路径` | 新动作，自动找空位安装 |
-| **生成后更新** | `update:文件路径` | 已有动作，按ID更新 |
-| **查询现有动作** | `info:动作ID或名称` | 导出JSON供分析 |
-| **测试动作** | `debug:动作ID或名称` | 调试运行，返回结果 |
-
-### 返回值
-
-通过 `-c` 参数获取 stdout 返回值：
-- `create` → `已安装，动作Id：xxx`
-- `update` → `更新成功`
-- `info` → JSON文件路径 或 `未找到动作`
-- `debug` → `调试完成，未报错` 或 `调试报错：xxx`
-
-**故障排除：** 如果调用通信动作一直没有返回值，说明该动作未安装。请提示用户先安装通信动作 `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`。
-
-### 验证流程（必须）
-
-**每次导入动作（create 或 update）后都必须验证：**
-
-```
-1. create/update: 文件路径 → 获取结果
-2. info: 动作ID → 获取导出的JSON文件路径
-3. 读取导出的JSON，与原始数据比较
-4. 如果严重不符：
-   a. 查阅文档找出问题
-   b. 修复JSON文件
-   c. update: 文件路径 → 更新动作
-   d. 再次 info 验证直到正确
-```
-
-**比较要点：**
-- ActionType 是否为 24
-- Steps 的 StepRunnerKey 是否正确
-- InputParams 参数名是否正确（如 `script` 不是 `code`）
-- OutputParams 参数名是否正确（如 `rtn` 不是 `result`）
-- 变量 Key 和 Type 是否正确
-
-**Why:** Quicker 导入可能静默失败或丢失字段，验证可及时发现问题并修复。
-
-**How to apply:** 每次 create 或 update 后立即 info 查询验证，不通过则修复后重新 update，循环直到正确。
-
-## 外部启动参考
-
-详见 [Quicker 外部启动文档](https://getquicker.net/kc/manual/doc/quicker-starter)
-
-### 命令行调用
-
-```powershell
-# 基本格式
-"C:\Program Files\Quicker\QuickerStarter.exe" runaction:动作ID
-
-# 传递参数（问号分隔）
-"C:\Program Files\Quicker\QuickerStarter.exe" runaction:动作ID?参数内容
-
-# 获取返回值（-c 等待20秒，-c数字 指定超时秒数）
-"C:\Program Files\Quicker\QuickerStarter.exe" -c "runaction:动作ID 参数"
-```
-
-### URI 协议调用
-
-```
-quicker:runaction:动作ID
-quicker:runaction:动作名称?参数
-```
-
-可在 Win+R、网页链接、快捷方式中使用。
-
-### 动作标识方式
-
-- **动作ID**：UUID格式，如 `00cd3048-813a-4759-98bb-7f5ef2931c50`
-- **动作名称**：直接写名称（需唯一）
-- **动作库ID**：从动作库安装的ID
-
-获取动作ID：动作右键 → 信息 → 复制动作ID或URI
 
 $ARGUMENTS

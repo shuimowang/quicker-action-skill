@@ -114,6 +114,12 @@ InputParams：`format`（`"UnicodeText"` 等）、`waitMs`、`trim`、`stopIfFai
 
 ---
 
+## 翻译 (`sys:translation`)
+
+InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Auto"` 等）、`vendor`（`"Baidu"` 等）。OutputParams：`resultText`。
+
+---
+
 ## 显示文本 (`sys:showText`)
 
 InputParams：
@@ -202,6 +208,12 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 
 ---
 
+## WebView2 浏览器窗口 (`sys:webview2`)
+
+独立的浏览器窗口模块，支持打开网址、执行 JS、发送消息、多标签页等。详细参数和用法见 [webview2.md](webview2.md)。
+
+---
+
 ## 停止 (`sys:stop`)
 
 ```json
@@ -245,26 +257,6 @@ InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、
 ---
 
 ## 表达式语法
-
-### 表达式前缀
-
-| 前缀 | 类型 | 用途 |
-|------|------|------|
-| `$$` | 插值 | 字符串拼接，变量被替换为值 |
-| `$=` | 表达式 | C# 代码，可计算和逻辑判断 |
-
-### 词典访问语法
-
-- **插值中**：`$${config.key}`
-- **表达式中**：`$={config}["key"]`
-
-### InputParams 变量使用
-
-不能直接用 `{varName}`，必须：
-- `$={varName}` 或
-- `VarKey: "varName"`
-
----
 
 表达式以 `$=` 开头，**任何步骤 InputParams 的 Value 字段都能用**，不限于赋值步骤。
 
