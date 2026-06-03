@@ -117,7 +117,49 @@ quicker.context.SetVarValue('变量名', value)     # 写入
 
 ## 多字段表单 (`sys:form`)
 
-详细参数和用法见 [form.md](form.md)。
+### 工作模式（`operation`，控制字段）
+
+| 值 | 名称 | 表单定义参数 |
+|----|------|-------------|
+| `variables` | 编辑动作变量的值（默认） | `formDef` (Type 11) |
+| `dict` | 编辑词典数据 | `formForDictDef` (Type 14) + `dictVar` |
+| `dict_dynamic` | 编辑词典数据（动态） | `dynamicFormForDictDef` (JSON字符串) + `dictVar` |
+
+### InputParams
+
+| 参数 | Key | 适用模式 | 类型 | 说明 |
+|------|-----|----------|------|------|
+| 工作模式 | `operation` | — | 下拉 | `variables` / `dict` / `dict_dynamic` |
+| 词典变量 | `dictVar` | dict, dict_dynamic | 词典(10) | 要编辑的词典变量（VarKey 引用） |
+| 表单定义 | `formDef` | variables | 11 | 变量模式的表单定义 |
+| 表单定义(词典) | `formForDictDef` | dict | 14 | 词典模式的表单定义 |
+| 表单定义(动态) | `dynamicFormForDictDef` | dict_dynamic | 文本 | JSON 格式表单定义 |
+| 窗口标题 | `title` | 全部 | 文本 | 默认"填写表单" |
+| 提示文字 | `help` | 全部 | 多行文本 | 帮助用户填写的提示 |
+| 帮助按钮内容 | `markdownhelp` | 全部 | 多行文本 | 点击弹出帮助，Markdown 格式（高级） |
+| 标题列宽度 | `titleColumnWidth` | 全部 | 数字 | 默认 100。负值如 -200 表示自适应且最大 200 |
+| 窗口宽度 | `windowWidth` | 全部 | 数字 | 默认 500，最小 400 |
+| 窗口最大高度 | `windowHeight` | 全部 | 数字 | 0=默认，需 >100 |
+| 输入框默认宽度 | `defaultInputWidth` | 全部 | 数字 | 0=自动宽度（高级） |
+| 恢复活动窗口 | `restoreFocus` | 全部 | 布尔 | 关闭后是否恢复之前的焦点窗口 |
+| 置顶显示 | `topMost` | 全部 | 布尔 | |
+| 关闭Enter提交 | `disableEnterSubmit` | 全部 | 布尔 | 禁用 Enter 键提交表单 |
+| 自定义确定按钮 | `confirm` | 全部 | 文本 | 如 `"保存(_S)"`，Alt+S 触发（高级） |
+| 自定义按钮 | `customButtons` | 全部 | 多行文本 | 格式 `"标题\|返回值"`，多个换行（高级） |
+| 默认选择分组 | `selectedGroup` | 全部 | 文本 | 分组标签页的默认选中项（高级） |
+| 窗口位置 | `winLocation` | 全部 | 下拉 | 同 webview2 的 winLocation 选项（高级） |
+| 自定义位置 | `winSize` | 全部 | 文本 | `winLocation=Manual` 时：`left,top,right,bottom`（高级） |
+| 取消后停止 | `stopIfFail` | 全部 | 布尔 | 默认 true |
+
+### OutputParams
+
+| 参数 | Key | 说明 |
+|------|-----|------|
+| 是否成功 | `isSuccess` | 操作是否成功 |
+| 点击的按钮 | `button` | 默认确定按钮返回空，自定义按钮返回自定义值 |
+| 选择的分组 | `selectedGroup` | 关闭时所选的标签页分组 |
+
+详细用法和 FormField 定义见 [form.md](form.md)。
 
 ---
 
