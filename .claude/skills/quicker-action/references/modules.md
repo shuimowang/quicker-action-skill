@@ -28,48 +28,61 @@
 
 ## C# 脚本 (`sys:csscript`)
 
-**普通模式 v1（C# 5.0）：**
-```json
+### 运行模式（`mode`）
+
+| 值 | 名称 | 说明 |
+|----|------|------|
+| `normal` | 普通模式v1 (CodeDOM) | C# 5.0，在 Quicker 进程内执行 |
+| `normal_roslyn` | 普通模式v2 (Roslyn) | C# 7.3，在 Quicker 进程内执行，可用内部程序集 |
+| `low_permission` | 低权限模式v1 (CodeDOM) | 在 LPAgent 代理进程执行 |
+| `low_permission_roslyn` | 低权限模式v2 (Roslyn) | 在 LPAgent 代理进程执行 |
+| `generate_assembly` | 生成程序集 | 生成 DLL 程序集对象 |
+
+### Exec 签名
+
+**普通模式 / generate_assembly：**
+```csharp
+public static string Exec(Quicker.Public.IStepContext context)
 {
-  "StepRunnerKey": "sys:csscript",
-  "InputParams": {
-    "mode": {"VarKey": null, "Value": "normal"},
-    "script": {"VarKey": null, "Value": "C#代码"},
-    "reference": {"VarKey": null, "Value": ""},
-    "runOnUiThread": {"VarKey": null, "Value": "auto"},
-    "enableCache": {"VarKey": null, "Value": "0"},
-    "stopIfFail": {"VarKey": null, "Value": "1"}
-  },
-  "OutputParams": {
-    "isSuccess": "isSuccessVar",
-    "rtn": "resultVar",
-    "errMessage": null
-  },
-  "IfSteps": [], "ElseSteps": [],
-  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
+    var value = context.GetVarValue("varName");
+    context.SetVarValue("varName", "output");
+    return "返回值";  // OutputParams 的 rtn 接收
 }
 ```
 
-**v2 Roslyn（C# 7.3）：** `mode` 改为 `"normal_roslyn"`，同样在 Quicker 进程内执行，可用 `Quicker.Utilities` 等内部程序集。
+**低权限模式：** 不能访问动作变量，仅支持简单文本传递。
+```csharp
+public static string Exec(string paramValue)
+{
+    return "结果";
+}
+```
 
-首次编译冷启动较慢，自动缓存程序集（代码不变可复用缓存）。
+### InputParams
 
-**低权限模式：** `mode` 为 `"lowtrust"` / `"lowtrust_roslyn"`，在 LPAgent 代理进程执行，**不能**访问动作变量和 Quicker 内部程序集，仅支持简单文本传递。
+| 参数 | Key | 适用模式 | 说明 |
+|------|-----|----------|------|
+| 运行模式 | `mode` | 全部 | 见上表 |
+| 脚本内容 | `script` | `normal`, `normal_roslyn` | C# 代码字符串 |
+| 脚本内容(低权限) | `scriptForLp` | `low_permission`, `low_permission_roslyn` | 低权限模式的 C# 代码 |
+| 脚本内容(程序集) | `scriptForAssembly` | `generate_assembly` | 需包含 namespace + class |
+| 引用DLL库 | `reference` | 全部 | 路径，每行一个 |
+| 参数值 | `paramValue` | `low_permission`, `low_permission_roslyn` | 传递给 Exec 的参数 |
+| 等待返回 | `waitResp` | `low_permission`, `low_permission_roslyn` | 是否等待脚本返回 |
+| 最长等待时间(ms) | `waitMs` | `low_permission`, `low_permission_roslyn` | 默认 10000 |
+| 执行线程 | `runOnUiThread` | `normal`, `normal_roslyn` | `"auto"` / `"ui"` / `"background"` / `"sta"` / `"staLongRun"` |
+| 允许缓存程序集 | `enableCache` | `normal`, `low_permission` | `"0"` / `"1"` |
+| 失败后停止 | `stopIfFail` | 全部 | `"0"` / `"1"` |
 
-Exec 签名不同：`public static string Exec(string paramValue)`
+### OutputParams
 
-**InputParams：**
-
-| 参数 | 说明 | 值 |
-|------|------|-----|
-| `mode` | 模式 | `"normal"` v1 / `"normal_roslyn"` v2 / `"lowtrust"` 低权限v1 / `"lowtrust_roslyn"` 低权限v2 |
-| `script` | C#代码 | 代码字符串 |
-| `reference` | DLL引用 | 路径，每行一个 |
-| `runOnUiThread` | 执行线程 | 详见 [C# 规则 - 线程选择](csharp-rules.md#线程选择) |
-| `enableCache` | 缓存程序集 | `"0"` / `"1"`，允许缓存编译后的程序集以加快下次启动，版本升级时自动丢弃 |
-| `stopIfFail` | 失败停止 | `"0"` / `"1"` |
-
-**OutputParams：** `isSuccess`（是否成功）、`rtn`（返回值）、`errMessage`（错误信息）
+| 参数 | Key | 适用模式 | 说明 |
+|------|-----|----------|------|
+| 是否成功 | `isSuccess` | 全部 | 操作是否成功 |
+| 返回内容 | `rtn` | `normal`, `normal_roslyn` | Exec 方法的返回值 |
+| 返回内容 | `resp` | `low_permission`, `low_permission_roslyn` | 脚本执行返回的结果文本 |
+| 程序集对象 | `rtnAssembly` | `generate_assembly` | 生成的 Assembly 对象 |
+| 程序集路径 | `assemblyPath` | `generate_assembly` | 生成的 DLL 路径 |
 
 详细用法见 [C# 规则](csharp-rules.md)。
 
