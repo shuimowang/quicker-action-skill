@@ -366,27 +366,16 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
 
 ## 停止 (`sys:stop`)
 
-```json
-{
-  "StepRunnerKey": "sys:stop",
-  "InputParams": {
-    "method": {"VarKey": null, "Value": "default"},
-    "isError": {"VarKey": null, "Value": "0"},
-    "return": {"VarKey": null, "Value": ""},
-    "showMessage": {"VarKey": null, "Value": ""}
-  },
-  "OutputParams": {},
-  "IfSteps": [], "ElseSteps": [],
-  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
-}
-```
+### InputParams
 
-| 参数 | 说明 |
-|------|------|
-| `method` | `"default"` 停止当前动作/从子程序返回（子程序中不停止主动作），`"forcestop"` 强制停止整个动作（即使在子程序中） |
-| `isError` | `"0"` 正常停止，`"1"` 错误停止 |
-| `return` | 返回值（子程序场景） |
-| `showMessage` | 停止时显示的消息 |
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 操作类型 | `method` | 下拉 | `default`（停止动作/从子程序返回） / `forcestop`（强制停止整个动作） |
+| 标记为出错 | `isError` | 布尔 | 用作子程序或被其他动作调用时，返回出错状态 |
+| 返回值 | `return` | 多行文本 | 被其他动作调用时，返回的动作结果 |
+| 提示消息 | `showMessage` | 多行文本 | 停止时显示的提示信息 |
+
+**无 OutputParams。**
 
 ---
 
