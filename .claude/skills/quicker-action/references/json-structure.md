@@ -181,7 +181,8 @@ bool? UseServerVersion                                  // 是否使用服务器
 > **⚠️ 子程序字段非空要求：**
 > - `Id` — 必须是有效的 GUID 字符串，不能为空
 > - `Name` — 子程序名称，不能为空（对应主动作的 `Title`）
-> - `CreateTimeUtc` / `LastEditTimeUtc` — 不能为空 `null`，否则 Quicker 反序列化会报 `DateTime` 转换错误。必须提供有效日期字符串如 `"2026-01-01T00:00:00"`
+> - `CreateTimeUtc` — `DateTime`（非空），必须提供有效日期字符串如 `"2026-01-01T00:00:00"`，否则报 `DateTime` 转换错误
+> - `LastEditTimeUtc` / `ShareTimeUtc` — `DateTime?`（可空），可以为 `null`
 >
 > 子程序结构比主动作简单，**没有** `Row`、`Col`、`ActionType`、`Title`、`Icon`、`Path`、`DelayMs`、`Data`、`Association` 等顶层字段。
 
