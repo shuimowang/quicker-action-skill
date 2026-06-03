@@ -24,7 +24,9 @@ public static void Exec(Quicker.Public.IStepContext context) { }
 
 ## 内置变量（`_context`、`_eval`、`_qk`）
 
-表达式和 C# 步骤中可直接使用三个内置变量。
+**仅在表达式（`$=`）中可直接使用** `_context`、`_eval`、`_qk` 三个内置变量。
+
+**在 C# 脚本步骤（`sys:csscript`）中：** 通过 `Exec` 方法的 `context` 参数（`IStepContext` 类型）访问上下文，**不是** `_context`。`IStepContext` 继承 `IActionContext`，拥有读写变量、调用子程序等全部方法。`_eval` 和 `_qk` 在 C# 脚本中不可用。
 
 ### `_eval`（表达式引擎）
 
