@@ -165,7 +165,26 @@ quicker.context.SetVarValue('变量名', value)     # 写入
 
 ## 获取选中文本 (`sys:getSelectedText`)
 
-InputParams：`format`（`"UnicodeText"` 等）、`waitMs`、`trim`、`stopIfFail`。OutputParams：`isSuccess`、`output`。
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 文本数据格式 | `format` | 下拉 | `UnicodeText`（默认） / `Rtf` / `Html` / `CommaSeparatedValue`(csv) |
+| 等待剪贴板时间 | `waitMs` | 整数 | 模拟复制后等待剪贴板变化的最长时间(ms)，默认 250 |
+| 去除前后空白 | `trim` | 布尔 | 去除内容前后的空白和空行 |
+| 不通过剪贴板获取 | `tryNoClipboard` | 布尔 | 通过 UIAutomation 获取（可能丢失换行信息） |
+| 使用动作参数 | `useActionParam` | 布尔 | 如果传递了动作参数，直接使用参数值作为结果 |
+| 失败后中止 | `stopIfFail` | 布尔 | |
+
+### OutputParams
+
+| 参数 | Key | 适用格式 | 说明 |
+|------|-----|----------|------|
+| 是否成功 | `isSuccess` | 全部 | |
+| 内容 | `output` | 全部 | 获取的文本 |
+| 去除封装的HTML | `cleanHtml` | Html | `<!--StartFragment-->` 和 `<!--EndFragment-->` 之间的部分 |
+| URL编码的内容 | `outputEncoded` | 全部 | URL 编码后的结果，用于拼接网址 |
+| 来源网址 | `url` | 全部 | 从网页复制时可能携带的网址信息 |
 
 ---
 
