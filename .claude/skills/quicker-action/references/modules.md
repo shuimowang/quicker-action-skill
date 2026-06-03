@@ -334,25 +334,23 @@ If/Else 容器步骤，始终包含 IfSteps 和 ElseSteps 两个分支。
 
 ## 步骤组 (`sys:group`)
 
-将多个步骤分组执行：
-```json
-{
-  "StepRunnerKey": "sys:group",
-  "InputParams": {
-    "skipErr": {"VarKey": null, "Value": "0"},
-    "skipWhenDebugging": {"VarKey": null, "Value": "0"},
-    "useMultiThread": {"VarKey": null, "Value": "0"},
-    "waitAny": {"VarKey": null, "Value": "0"}
-  },
-  "OutputParams": {
-    "isSuccess": null,
-    "errorMessage": null
-  },
-  "IfSteps": [ /* 组内步骤 */ ],
-  "ElseSteps": [],
-  "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
-}
-```
+容器步骤，将多个步骤分组执行。
+
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 忽略错误 | `skipErr` | 布尔 | 忽略内部步骤的错误，继续执行后续步骤 |
+| 调试时不输出 | `skipWhenDebugging` | 布尔 | 减少不必要的调试输出 |
+| 使用多线程 | `useMultiThread` | 布尔 | ⚠️ 请阅读文档后再使用 |
+| WaitAny 模式 | `waitAny` | 布尔 | 多线程时任意一个线程结束即可（配合 useMultiThread） |
+
+### OutputParams
+
+| 参数 | Key | 说明 |
+|------|-----|------|
+| 是否成功 | `isSuccess` | 内部步骤是否运行成功 |
+| 错误消息 | `errorMessage` | 错误信息 |
 
 ---
 
