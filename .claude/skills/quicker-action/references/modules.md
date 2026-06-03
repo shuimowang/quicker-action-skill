@@ -299,6 +299,71 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
 
 ---
 
+## 自定义窗口 (`sys:customwindow`)
+
+### 操作类型（`type`，控制字段）
+
+| 值 | 名称 | 说明 |
+|----|------|------|
+| `ShowAndWaitClose` | 显示窗口并等待关闭 | 暂停直到窗口关闭 |
+| `Show` | 显示窗口 | 不等待，后续步骤立即执行 |
+| `Close` | 关闭窗口 | 通过 windowId 查找并关闭 |
+| `GetWindows` | 获取窗口列表 | 检测已打开的窗口 |
+
+### InputParams
+
+| 参数 | Key | 适用类型 | 类型 | 说明 |
+|------|-----|----------|------|------|
+| 窗口XAML代码 | `windowMarkup` | Show, ShowAndWaitClose | 多行文本(XML) | WPF XAML 定义 |
+| 数据映射 | `dataMapping` | Show, ShowAndWaitClose | 多行文本 | `数据名:{变量名}` 或 `数据名:=表达式`，每行一个 |
+| 辅助C#代码 | `cscode` | Show, ShowAndWaitClose | 多行文本(C#) | OnWindowCreated/OnWindowLoaded/OnButtonClicked 回调（高级） |
+| 事件 | `events` | Show, ShowAndWaitClose | 多行文本 | 事件处理（高级） |
+| 窗口标识 | `windowId` | 全部 | 文本 | 用于查找/关闭窗口 |
+| 自动关闭时间(S) | `autoCloseTime` | Show, ShowAndWaitClose | 数字 | >0.5秒，0=不自动关闭（高级） |
+| 激活模式 | `activateMode` | Show, ShowAndWaitClose | 下拉 | 见下表（高级） |
+| 窗口位置 | `winLocation` | Show, ShowAndWaitClose | 下拉 | 见下表（高级） |
+| 窗口尺寸/位置 | `winSize` | Show, ShowAndWaitClose | 文本 | `宽,高` 或 `left,top,right,bottom`（高级） |
+| 失去焦点后关闭 | `closeWhenDeactivate` | Show, ShowAndWaitClose | 下拉 | `true` / `false` / `closeIfNotTopmost` |
+| 失败后停止 | `stopIfFail` | 全部 | 布尔 | |
+
+### activateMode 选项
+
+| 值 | 说明 |
+|----|------|
+| `NotActivatable` | 不支持激活（不占用焦点，仅鼠标操作） |
+| `NotActivatableMouseThrough` | 不支持激活，鼠标穿透 |
+| `NotActivated` | 支持激活，打开时不抢占焦点 |
+| `AutoActivate` | 支持激活，打开时抢占焦点（默认） |
+
+### winLocation 选项
+
+| 值 | 名称 |
+|----|------|
+| `WithMouse1` | 跟随鼠标（指针周围） |
+| `WithMouse2` | 跟随鼠标（指针右下） |
+| `CenterScreen` | 屏幕中间 |
+| `TopLeft` / `TopCenter` / `TopRight` | 屏幕上部 |
+| `LeftCenter` / `RightCenter` | 屏幕中部两侧 |
+| `BottomLeft` / `BottomCenter` / `BottomRight` | 屏幕下部 |
+| `FullScreen` | 全屏 |
+| `Maximized` | 最大化 |
+| `Manual` | 自定义位置（需配合 winSize） |
+| `Auto` | 系统默认 |
+
+### OutputParams
+
+| 参数 | Key | 适用类型 | 类型 | 说明 |
+|------|-----|----------|------|------|
+| 是否成功 | `isSuccess` | 全部 | bool | |
+| 窗口结果 | `result` | ShowAndWaitClose, Close | 文本 | 通过 `close:result` 返回 |
+| 窗口对象列表 | `windowList` | GetWindows | IList\<Window\> (98) | 已打开的窗口列表 |
+| 窗口句柄 | `windowHandle` | Show | IntPtr (12) | |
+| 关闭时窗口位置 | `windowLocation` | ShowAndWaitClose | 文本 | |
+
+详细用法见 [customwindow.md](customwindow.md)。
+
+---
+
 ## 停止 (`sys:stop`)
 
 ```json
