@@ -2,8 +2,11 @@
 
 ## Exec 方法签名
 
+> **⚠️ `sys:csscript` 的 script 参数必须包含一个 `public static` 的 `Exec` 方法。**
+> 没有 Exec 方法的代码会被编译但不会执行，静默无输出。方法可以有返回值（`string`）或无返回值（`void`）。
+
 ```csharp
-// 有返回值
+// 有返回值（OutputParams 的 rtn 接收返回值）
 public static string Exec(Quicker.Public.IStepContext context)
 {
     var text = context.GetVarValue("varName") as string;
@@ -14,6 +17,10 @@ public static string Exec(Quicker.Public.IStepContext context)
 // 无返回值
 public static void Exec(Quicker.Public.IStepContext context) { }
 ```
+
+- 必须是 `public static`
+- 参数类型必须是 `Quicker.Public.IStepContext`（不是 `ActionExecuteContext`）
+- 用 `context.GetVarValue()` / `context.SetVarValue()` 读写变量（不是 `_context`）
 
 ## 内置变量（`_context`、`_eval`、`_qk`）
 
