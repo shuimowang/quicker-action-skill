@@ -167,7 +167,7 @@ bool? UseServerVersion                                  // 是否使用服务器
 {
   "Id": "GUID", "Name": "子程序名", "Description": "描述",
   "SummaryExpression": "$$",
-  "CreateTimeUtc": "...", "LastEditTimeUtc": "...",
+  "CreateTimeUtc": "2026-01-01T00:00:00", "LastEditTimeUtc": "2026-01-01T00:00:00",
   "IsLocalEdited": false, "IsProtected": false,
   "SubPrograms": [], "SharedId": null, "ShareTimeUtc": null, "UseServerVersion": null,
   "Variables": [
@@ -177,6 +177,13 @@ bool? UseServerVersion                                  // 是否使用服务器
   "Steps": []
 }
 ```
+
+> **⚠️ 子程序字段非空要求：**
+> - `Id` — 必须是有效的 GUID 字符串，不能为空
+> - `Name` — 子程序名称，不能为空（对应主动作的 `Title`）
+> - `CreateTimeUtc` / `LastEditTimeUtc` — 不能为空 `null`，否则 Quicker 反序列化会报 `DateTime` 转换错误。必须提供有效日期字符串如 `"2026-01-01T00:00:00"`
+>
+> 子程序结构比主动作简单，**没有** `Row`、`Col`、`ActionType`、`Title`、`Icon`、`Path`、`DelayMs`、`Data`、`Association` 等顶层字段。
 
 ### 在 CustomWindow cscode 中调用子程序
 
