@@ -177,36 +177,65 @@ InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Aut
 
 ## 显示文本 (`sys:showText`)
 
-InputParams：
+### 操作类型（`type`，控制字段）
 
-| 参数 | 说明 |
-|------|------|
-| `type` | `"NO_WAIT"` 不等待关闭 |
-| `text` | 显示的文本内容 |
-| `title` | 窗口标题 |
-| `fontsize` | 字体大小 |
-| `fontfamily` | 字体 |
-| `enableEscClose` | ESC 关闭，`"true"` / `"false"` |
-| `autoWrap` | 自动换行，`"true"` / `"false"` |
-| `topMost` | 置顶，`"true"` / `"false"` |
-| `bgColor` | 背景颜色 |
-| `textColor` | 文字颜色 |
-| `highlight` | 高亮 |
-| `showLineNum` | 显示行号，`"true"` / `"false"` |
-| `showBuildInToolbar` | 显示内置工具栏，`"true"` / `"false"` |
-| `copyWholeLine` | 点击复制整行，`"true"` / `"false"` |
-| `autoCloseKey` | 自动关闭快捷键 |
-| `closeWhenLostFocus` | 失去焦点关闭，`"true"` / `"false"` |
-| `caretPosition` | 光标位置 |
-| `winLocation` | 窗口位置 |
-| `winSize` | 窗口尺寸 |
-| `operations` | 操作 |
-| `autoSaveToState` | 自动保存到状态 |
-| `updateIfExists` | 已存在时更新，`"0"` / `"1"` |
-| `stopIfFail` | 失败停止，`"0"` / `"1"` |
-| `advancedSettings` | 高级设置 |
+| 值 | 名称 |
+|----|------|
+| `NO_WAIT` | 显示窗口，不等待关闭（默认） |
+| `WAIT` | 显示窗口，等待关闭 |
+| `CLOSE_WINDOW` | 关闭窗口 |
+| `GET_WIN_INFO` | 获取窗口信息 |
+| `APPEND_TEXT` | 追加内容 |
+| `ACTIVATE_WINDOW` | 显示和激活窗口 |
+| `WAIT_CLOSE` | 等待窗口关闭 |
+| `GET_ALL_WINDOWS` | 获取所有文本窗口 |
+| `GET_ACTION_WINDOWS` | 获取当前动作创建的所有文本窗口 |
 
-OutputParams：`isSuccess`、`windowHandle`、`errMessage`。
+### InputParams
+
+| 参数 | Key | 适用类型 | 类型 | 说明 |
+|------|-----|----------|------|------|
+| 文本内容 | `text` | WAIT, NO_WAIT, APPEND_TEXT | 多行文本 | 要显示的文本 |
+| 窗口标题 | `title` | WAIT, NO_WAIT | 文本 | 默认"文本窗口" |
+| 文本窗口标识 | `autoCloseKey` | 除 GET_ALL/ACTION_WINDOWS | 文本 | `=` 表示当前动作 ID |
+| 工具栏操作 | `operations` | WAIT, NO_WAIT | 多行文本 | 每行一个 `"显示文本\|值"`（高级） |
+| 窗口位置 | `winLocation` | WAIT, NO_WAIT | 下拉 | 同 customwindow（高级） |
+| 窗口尺寸/位置 | `winSize` | WAIT, NO_WAIT | 文本 | `宽,高` 或 `left,top,right,bottom`（高级） |
+| 字体大小 | `fontsize` | WAIT, NO_WAIT | 数字 | 默认 14（高级） |
+| 字体名称 | `fontfamily` | WAIT, NO_WAIT | 文本 | 多字体逗号分隔（高级） |
+| 背景颜色 | `bgColor` | WAIT, NO_WAIT | 文本 | `#RRGGBB`（高级） |
+| 文字颜色 | `textColor` | WAIT, NO_WAIT | 文本 | `#RRGGBB`（高级） |
+| 语法高亮 | `highlight` | WAIT, NO_WAIT | 下拉 | 见下表（高级） |
+| 自动保存到状态 | `autoSaveToState` | WAIT, NO_WAIT | 文本 | 状态 Key（高级） |
+| 置顶显示 | `topMost` | WAIT, NO_WAIT | 布尔 | |
+| Esc 键关闭窗口 | `enableEscClose` | WAIT, NO_WAIT | 布尔 | 默认 true（高级） |
+| 失去焦点自动关闭 | `closeWhenLostFocus` | WAIT, NO_WAIT | 布尔 | （高级） |
+| 显示行号 | `showLineNum` | WAIT, NO_WAIT | 布尔 | 默认 true（高级） |
+| 自动换行显示 | `autoWrap` | WAIT, NO_WAIT | 布尔 | 默认 true（高级） |
+| 显示内置工具栏 | `showBuildInToolbar` | WAIT, NO_WAIT | 布尔 | 默认 true（高级） |
+| 未选中时复制整行 | `copyWholeLine` | WAIT, NO_WAIT | 布尔 | （高级） |
+| 光标位置 | `caretPosition` | WAIT, NO_WAIT | 整数 | 0=最前，-1=最后（高级） |
+| 高级设置 | `advancedSettings` | 全部 | 多行文本 | 参考模块文档（高级） |
+| 存在时更新内容 | `updateIfExists` | NO_WAIT | 布尔 | 不关旧窗口直接更新（高级） |
+| 失败后停止 | `stopIfFail` | 全部 | 布尔 | |
+
+### highlight 语法高亮选项（常用）
+
+`C#`、`C++`、`CSS`、`HTML`、`Java`、`JavaScript`、`Json`、`MarkDown`、`PHP`、`PowerShell`、`Python`、`Ruby`、`XML`、`TXT`（无）等 30+ 种。
+
+### OutputParams
+
+| 参数 | Key | 适用类型 | 说明 |
+|------|-----|----------|------|
+| 是否成功 | `isSuccess` | 全部 | |
+| 窗口是否存在 | `isWindowExists` | GET_WIN_INFO | |
+| 选择的项 | `selectedOperation` | WAIT | 用户选择的工具栏操作 |
+| 结果文本 | `resultText` | WAIT, CLOSE_WINDOW, GET_WIN_INFO | 文本框内全部文本 |
+| 选中的文本 | `selectedText` | WAIT, CLOSE_WINDOW, GET_WIN_INFO | |
+| 光标位置 | `caretPosition` | WAIT, CLOSE_WINDOW, GET_WIN_INFO | 字符序号 |
+| 窗口句柄 | `windowHandle` | NO_WAIT, GET_WIN_INFO | |
+| 窗口位置 | `windowPosition` | WAIT, CLOSE_WINDOW, GET_WIN_INFO | 最终显示位置 |
+| 所有窗口 | `allWindows` | GET_ALL_WINDOWS, GET_ACTION_WINDOWS | 词典(10)，key=句柄, value=标识 |
 
 ---
 
