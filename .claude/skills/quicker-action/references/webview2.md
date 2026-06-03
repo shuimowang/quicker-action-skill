@@ -600,3 +600,14 @@ wv.CoreWebView2.Navigate("https://new-url.com");
 6. **同步调用死锁**：复杂操作使用同步 JS 调用可能导致 UI 死锁，优先使用异步方式
 7. **不占用焦点**：`noActivate` 为 `true` 时无法在窗口中输入文字
 8. **WebView2 对象线程**：`webView` 输出的对象需在 UI 线程中使用
+9. **直接加载 HTML 时 Web API 受限**：`url` 参数直接传入 HTML 内容时，页面 origin 为 `null`，以下 API 不可用：
+   - `localStorage` / `sessionStorage` — 读写会抛出 `SecurityError`
+   - `indexedDB` — 同样受 origin 限制
+   - `fetch` / `XMLHttpRequest` — 无法发起跨域请求（同源策略下 origin 为 null 会被拒绝）
+   - Cookie 相关操作
+   - **替代方案**：用 JS 变量（内存）存储数据，或用 `$quickerSync.setVar` / `$quickerSync.getVar` 通过 Quicker 动作变量存取数据（不受 origin 限制）
+10. **直接加载 HTML 时 JS 语法建议**：`url` 参数传 HTML 内容时，脚本在特殊环境中执行，建议：
+    - 用 `try/catch` 包裹主逻辑，出错时能显示错误信息而非白屏
+    - 优先用 `for` 循环而非 `forEach`/`find` 等 ES6 数组方法（兼容性更好）
+    - 用 `document.onkeydown` 替代 `addEventListener`（更不容易出问题）
+    - 简单 `onclick="..."` 内联事件通常比 `addEventListener` 更可靠
