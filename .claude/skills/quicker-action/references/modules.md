@@ -252,7 +252,23 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
 
 ---
 
+## 条件判断 (`sys:if`)
+
+If/Else 容器步骤，始终包含 IfSteps 和 ElseSteps 两个分支。
+
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 如果 | `condition` | 布尔(多行) | 条件表达式，支持 `$=` 前缀 |
+
+**无 OutputParams。**
+
+---
+
 ## 条件判断 (`sys:simpleIf`)
+
+简化版 If，ElseSteps 可省略（设为 `null`）。
 
 ### InputParams
 
