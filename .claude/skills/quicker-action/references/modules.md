@@ -188,12 +188,6 @@ quicker.context.SetVarValue('变量名', value)     # 写入
 
 ---
 
-## 翻译 (`sys:translation`)
-
-InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Auto"` 等）、`vendor`（`"Baidu"` 等）。OutputParams：`resultText`。
-
----
-
 ## 显示文本 (`sys:showText`)
 
 ### 操作类型（`type`，控制字段）
