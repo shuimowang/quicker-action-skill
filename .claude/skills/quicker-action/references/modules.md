@@ -241,7 +241,17 @@ InputParams：`operation`（`"single"`）、`text`、`srcLang`/`dstLang`（`"Aut
 
 ## 提示消息 (`sys:notify`)
 
-InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`msg`、`maxLines`（最大行数，0 不限）、`style`（`"Default"` 屏幕中下 / `"Style2"` 屏幕右上）、`clickAction`（点击执行的动作，仅 Default 风格）。
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 类型 | `type` | 下拉 | `Info` / `Success` / `Warning` / `Error` / `WindowsToast` |
+| 消息内容 | `msg` | 多行文本 | |
+| 最大行数 | `maxLines` | 整数 | 0=不限 |
+| 风格 | `style` | 下拉 | `Default`（屏幕底部） / `Style2`（屏幕右侧） |
+| 点击命令 | `clickAction` | 多行文本 | 仅 Default 风格，支持 Win+R 可执行的命令（网址等），默认复制文字 |
+
+**无 OutputParams。**
 
 ---
 
