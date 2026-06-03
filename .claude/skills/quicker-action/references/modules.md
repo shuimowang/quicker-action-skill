@@ -254,6 +254,14 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
 
 ## 条件判断 (`sys:simpleIf`)
 
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 如果 | `condition` | 布尔(多行) | 条件表达式，支持 `$=` 前缀 |
+
+**无 OutputParams。** 容器步骤，包含 `IfSteps` 和 `ElseSteps`。
+
 ```json
 {
   "StepRunnerKey": "sys:simpleIf",
@@ -261,8 +269,8 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
     "condition": {"VarKey": null, "Value": "$={varName}==\"value\""}
   },
   "OutputParams": {},
-  "IfSteps": [ /* ... */ ],
-  "ElseSteps": [ /* ... */ ],
+  "IfSteps": [ /* 条件为真时执行 */ ],
+  "ElseSteps": [ /* 条件为假时执行（可选） */ ],
   "Note": "", "Disabled": false, "Collapsed": false, "DelayMs": 0
 }
 ```
