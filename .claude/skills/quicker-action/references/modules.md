@@ -218,7 +218,37 @@ InputParams：`type`（`"Info"` / `"Success"` / `"Warning"` / `"Error"`）、`ms
 
 ## 调用子程序 (`sys:subprogram`)
 
-InputParams：`subProgram`（子程序名）、`var:参数名`（参数值）、`stopIfFail`。OutputParams：`isSuccess`、`var:输出名`、`errMessage`。
+### InputParams
+
+| 参数 | Key | 类型 | 说明 |
+|------|-----|------|------|
+| 子程序 | `subProgram` | 文本 | 子程序名称或 `@@ID@版本@名称` 格式 |
+| 失败后停止 | `stopIfFail` | 布尔 | 默认 true |
+| 跳过调试输出 | `skipDebugOutput` | 布尔 | 调试时不输出子程序内部信息（高级） |
+
+**传入参数：** 额外添加 `var:参数名` 键，值为要传入的内容：
+```json
+"InputParams": {
+  "subProgram": {"VarKey": null, "Value": "子程序名"},
+  "var:input1": {"VarKey": null, "Value": "值1"},
+  "var:input2": {"VarKey": "myVar", "Value": null},
+  "stopIfFail": {"VarKey": null, "Value": "1"}
+}
+```
+
+### OutputParams
+
+| 参数 | Key | 说明 |
+|------|-----|------|
+| 是否成功 | `isSuccess` | 子程序是否运行成功 |
+
+**接收输出：** 额外添加 `var:输出名` 键，值为目标变量名：
+```json
+"OutputParams": {
+  "isSuccess": "success",
+  "var:result": "myResult"
+}
+```
 
 ---
 
