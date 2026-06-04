@@ -53,6 +53,17 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 | 分析/查看已有动作 | `info:动作名或ID` | 导出 JSON 到 exports 目录 |
 | 测试动作是否正常 | `debug:动作名或ID` | 运行动作并检查报错 |
 
+## 判断动作来源
+
+通过查询返回的 `ActionItem.Data` 字段可以判断动作来源：
+
+| `ActionItem.Data` | 来源 | 说明 |
+|--------------------|------|------|
+| 非 null | 本地创建的动作 | Data 包含动作的完整 JSON，可正常 `update` |
+| `null` | 动作库安装的动作 | 来自 Quicker 动作库（在线安装），Data 为空 |
+
+**用途：** 当需要修改某个动作时，先查询判断来源。如果是动作库安装的（Data 为 null），应提示用户该动作为动作库安装，直接更新可能被动作库覆盖，建议复制为新动作后再修改。
+
 ## 注意事项
 
 - PowerShell 中使用 `-c` 参数获取 stdout（`-Command` 的缩写）
