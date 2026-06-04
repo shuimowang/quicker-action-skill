@@ -1,6 +1,6 @@
 # 通信动作（动作管理）
 
-通过 QuickerStarter.exe 调用通信动作，实现动作的创建、更新、查询、调试。
+通过 QuickerStarter.exe 调用通信动作，实现动作的创建、更新、查询、调试、删除。
 
 ## 通信动作信息
 
@@ -33,6 +33,9 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 # 调试运行动作
 Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 debug:动作ID或名称`""
+
+# 删除动作
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 delete:动作ID`""
 ```
 
 ## 返回值（通过 -c 获取 stdout）
@@ -43,6 +46,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 | `update` | `更新成功` |
 | `info` | JSON文件路径 或 `未找到动作` |
 | `debug` | `调试完成，未报错` 或 `调试报错：xxx` |
+| `delete` | `OK` 或 错误信息 |
 
 ## 使用场景
 
@@ -52,6 +56,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 | 修改已有动作后更新 | `update:文件路径` | 按 JSON 中的 ID 匹配 |
 | 分析/查看已有动作 | `info:动作名或ID` | 导出 JSON 到 exports 目录 |
 | 测试动作是否正常 | `debug:动作名或ID` | 运行动作并检查报错 |
+| 删除动作 | `delete:动作ID` | 删除指定动作，不可逆 |
 
 ## 判断动作来源
 
@@ -70,6 +75,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 - 路径含空格时需要用引号包裹
 - `info` 命令支持按名称模糊匹配
 - 导出的 JSON 文件名格式：`动作名_ID.json`
+- `delete` 命令需要动作 ID，删除操作不可逆，请谨慎使用
 
 ## 外部文档
 
