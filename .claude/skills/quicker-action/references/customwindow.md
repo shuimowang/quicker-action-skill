@@ -30,8 +30,9 @@
 - 去掉 `x:Class` 属性
 - `xmlns:qk="https://getquicker.net"` 仅在使用 `qk:` 前缀控件（如 `qk:IconControl`）时才需要声明，等价于 `Quicker.View.Controls`
 - **不能用字符串绑定事件**：`Loaded="OnLoaded"`、`Click="OnClick"` 等写法会报错，
-  事件必须在 cscode 中通过代码绑定
-- 按钮操作：`qk:Att.Action="操作内容"`（存在但不推荐，优先在 cscode 中用 `win.Close()` 关闭窗口）
+  事件必须在 cscode 中处理
+- 静态命令按钮优先用 `Tag` + `OnButtonClicked` 分发；右键、长按、拖拽、文本变化、动态控件等场景用 `+=` 绑定对应事件
+- 按钮操作：`qk:Att.Action="操作内容"`（存在但不推荐，复杂逻辑放在 cscode 中）
 
 ### 自定义标题栏（WindowStyle="None"）
 
@@ -152,9 +153,11 @@ public static bool OnButtonClicked(
 }
 ```
 
-**按钮触发回调（不关闭窗口）：** 用 `Tag="xxx"`，在 OnButtonClicked 中检查 `controlTag`，返回 `true` 保持窗口。
+**静态命令按钮：** 用 `Tag="xxx"`，在 `OnButtonClicked` 中检查 `controlTag`；返回 `true` 保持窗口。
 
-**按钮关闭窗口：** 在 OnButtonClicked 中用 `win.Close()`，不要使用 `qk:Att.Action`。
+**特殊交互按钮：** 需要右键、长按、拖拽、动态生成等事件时，用 `+=` 绑定具体事件。
+
+**按钮关闭窗口：** 在 `OnButtonClicked` 或对应事件中用 `win.Close()`，复杂逻辑不要依赖 `qk:Att.Action`。
 
 ```csharp
 // XAML: <Button x:Name="btnClose" Content="关闭" Tag="Close"/>

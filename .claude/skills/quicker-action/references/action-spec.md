@@ -132,8 +132,8 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 - `xmlns:qk="https://getquicker.net"` 仅在使用 qk: 前缀控件（如 `qk:IconControl`）时才需要声明
 - 不写 `x:Class`
 - 不写 `WindowStartupLocation`（由 `winLocation` 参数控制）
-- 事件绑定在 cscode 中用 `+=`，不写 XAML 字符串绑定
-- 按钮操作优先用 `Tag` 属性 + `OnButtonClicked` 分发
+- 事件绑定在 cscode 中处理，不写 XAML 字符串绑定
+- 静态命令按钮优先用 `Tag` + `OnButtonClicked` 分发；右键、长按、拖拽、文本变化、动态控件等场景用 `+=` 绑定对应事件
 - `Style` 必须用 `StaticResource`
 
 ### cscode 规范
