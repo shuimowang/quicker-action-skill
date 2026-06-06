@@ -1,0 +1,4 @@
+interface:
+  display_name: "Quicker Action"
+  short_description: "Build and edit Quicker action JSON files"
+  default_prompt: "Use $quicker-action to create or modify a Quicker action JSON file."
