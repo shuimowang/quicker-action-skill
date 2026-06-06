@@ -6,7 +6,13 @@
 
 **每次操作前，必须先阅读相关参考文档。不读不动手，不凭记忆写代码。**
 
-参考文档位于 `.claude/skills/quicker-action/references/` 目录下，按需读取：
+用 `read` 工具读取以下文件，获取完整的模块定义、变量类型、设计规则：
+
+```
+.claude/skills/quicker-action/references/action-spec.md
+```
+
+其余参考按需读取：
 
 - **action-spec.md** — 设计原则、CustomWindow 规范、变量类型对照、复查清单（**必读**）
 - **communication-action.md** — 动作的创建/更新/查询/调试（**分析已有动作必读**）
