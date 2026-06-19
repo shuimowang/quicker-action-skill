@@ -73,6 +73,8 @@ Choose the lightest implementation that satisfies the requirement:
 
 Use `sys:form` for configuration and ordinary parameter entry. Use `sys:customwindow` only for rich layouts, previews, drag/drop, complex events, or standalone windows. If using CustomWindow, keep related UI data handling in `cscode` instead of splitting simple callbacks into separate `sys:csscript` steps.
 
+For CustomWindow display mode, use `Show` when the window step is terminal and no work follows its closure; this is easier to debug and update. Use `ShowAndWaitClose` only when later steps need to run after closure, consume close results, or keep the action alive for the window lifetime.
+
 Do not use C# when an expression or built-in step is enough. Use C# when the implementation actually requires platform APIs, external DLLs, UI/STA access, or complex object construction and control flow.
 
 ## JSON Rules

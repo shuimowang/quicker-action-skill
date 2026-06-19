@@ -386,6 +386,8 @@ If/Else 容器步骤，始终包含 IfSteps 和 ElseSteps 两个分支。
 | `Close` | 关闭窗口 | 通过 windowId 查找并关闭 |
 | `GetWindows` | 获取窗口列表 | 检测已打开的窗口 |
 
+选型规则：CustomWindow 后没有下一步时优先 `Show`，便于调试和更新；只有关闭窗口后还需继续执行、接收关闭结果或保持动作生命周期时才用 `ShowAndWaitClose`。
+
 ### InputParams
 
 | 参数 | Key | 适用类型 | 类型 | 说明 |

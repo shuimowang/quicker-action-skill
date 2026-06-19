@@ -19,6 +19,19 @@
 | `winSize` | 窗口尺寸，如 `"300,200"` 或 `"50%,50%"` |
 | `stopIfFail` | 失败停止，`"0"` / `"1"` |
 
+## Show 与 ShowAndWaitClose 选型
+
+默认先看自定义窗口步骤之后是否还有逻辑：
+
+| 场景 | 推荐 type | 原因 |
+|------|-----------|------|
+| CustomWindow 是最后一个步骤，关闭后不再处理 | `Show` | 不阻塞动作执行，方便调试、重跑和更新 |
+| 关闭窗口后还要执行后续步骤 | `ShowAndWaitClose` | 必须等待窗口关闭后再继续 |
+| 需要读取 `result` 或 `windowLocation` | `ShowAndWaitClose` | 这些结果在关闭窗口时产生 |
+| 动作生命周期必须覆盖窗口生命周期 | `ShowAndWaitClose` | 避免动作提前结束 |
+
+如果窗口内部逻辑都在 cscode 中完成，并且窗口后没有下一步，优先使用 `Show`。
+
 ## OutputParams
 
 `isSuccess`、`result`（窗口结果）、`windowLocation`、`errMessage`
@@ -323,11 +336,11 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 }
 ```
 
-在 `ShowAndWaitClose` 步骤前执行此子程序即可确保单实例。
+在 `Show` 或 `ShowAndWaitClose` 步骤前执行此子程序即可确保单实例。
 
 ### 手动实现
 
-窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
+窗口通过 `windowId` 标识查找，GetWindows 和后续的 Show / ShowAndWaitClose 必须使用相同的 `windowId`。
 如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
 
 **先声明变量，再添加步骤。** 使用下面的 `GetWindows` 示例前，必须在当前动作或子程序的 `Variables` 数组中加入：
@@ -356,7 +369,7 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 ```
 步骤1: GetWindows → windowList
 步骤2: If windowList.Any() → 执行策略
-步骤3: ShowAndWaitClose → 显示新窗口（仅停止策略不需要此步）
+步骤3: Show → 显示新窗口（窗口后无步骤时推荐；需要等待关闭后继续时改用 ShowAndWaitClose）
 ```
 
 #### 策略选择（按优先级）

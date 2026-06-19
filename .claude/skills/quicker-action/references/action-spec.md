@@ -137,7 +137,7 @@ Step 1: sys:simpleIf {windowList}.Any()
   IfSteps:
     - sys:customwindow (Close) 关闭旧窗口
     - sys:stop 退出
-Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
+Step 2: sys:customwindow (Show) 主窗口
 ```
 
 只要使用 `GetWindows → windowList`，就必须先在同一作用域的 `Variables` 中加入：
@@ -164,6 +164,12 @@ Step 2: sys:customwindow (ShowAndWaitClose) 主窗口
 ### windowId
 
 单窗口动作默认用 `$=_context.ActionId`。同一动作需要同时显示多个窗口时，在动作 ID 后附加稳定后缀，例如 `$=_context.ActionId + ":settings"`。
+
+### Show 与 ShowAndWaitClose
+
+- CustomWindow 是动作的最后一个步骤，关闭窗口后没有任何后续逻辑时，默认使用 `Show`。它不会让动作执行线程一直等待窗口关闭，更方便调试、重新运行和更新动作。
+- 只有窗口关闭后还要继续执行步骤、读取 `result` / `windowLocation`、或必须让动作生命周期覆盖窗口生命周期时，才使用 `ShowAndWaitClose`。
+- 不要因为“主窗口”就默认选择 `ShowAndWaitClose`；应根据关闭后是否还有工作来决定。
 
 ### XAML 规范
 
@@ -271,6 +277,7 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 - [ ] `LimitSingleInstance = false`
 - [ ] 不允许重复打开时，有显式多实例处理；允许多窗口时，`windowId` 能区分窗口
 - [ ] 单窗口的 windowId 用 `$=_context.ActionId`；多窗口使用动作 ID 加稳定后缀
+- [ ] CustomWindow 后无后续步骤时使用 `Show`；只有需要等待关闭后继续处理时才用 `ShowAndWaitClose`
 - [ ] 使用 qk: 控件时声明了 `xmlns:qk`，未使用时不强制
 - [ ] XAML 无 `x:Class`、无 `WindowStartupLocation`
 - [ ] 事件在 cscode 中绑定，不写 XAML 字符串绑定

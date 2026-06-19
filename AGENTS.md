@@ -170,3 +170,4 @@ B. [选项]
 9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 action-spec.md 复查清单逐条验证
 11. 新动作校验后默认自动 `create`；已有动作修改后必须 `update`，禁止重复 `create`
+12. CustomWindow 是最后一步时优先用 `Show`；只有关闭后需要继续处理、读取关闭结果或维持动作生命周期时才用 `ShowAndWaitClose`
