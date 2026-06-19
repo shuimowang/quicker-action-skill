@@ -1,4 +1,6 @@
-# Quicker 模块定义
+# Quicker 常用模块速查
+
+本文只收录生成动作时最常用的模块，不是 Quicker 全部 `StepRunnerKey` 的白名单。未收录的模块应查询 Quicker 官方文档，或从本机已有动作导出 JSON 后核对参数结构。
 
 ## 赋值 (`sys:assign`)
 
@@ -518,7 +520,7 @@ if ({number1} > {number2})
 
 ### 内置对象
 
-**仅在表达式（`$=`）中可直接使用**，C# 脚本步骤用 `Exec` 的 `context` 参数。详细说明见 [C# 规则 - 内置变量](csharp-rules.md#内置变量_context_eval_qk)。
+**仅在表达式（`$=`）中可直接使用**，C# 脚本步骤用 `Exec` 的 `context` 参数。详细说明见 [C# 规则](csharp-rules.md)。
 
 - `_context` — 动作上下文（`ActionExecuteContext`），可调用 `GetVarValue`/`SetVarValue`/`RunSp`/`WriteState`/`ReadCache` 等
 - `_eval` — 表达式引擎（`EvalContext`），可注册自定义 DLL（`_eval.RegisterAssembly`）、注册方法、注册变量

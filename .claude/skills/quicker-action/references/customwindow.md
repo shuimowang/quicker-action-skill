@@ -14,7 +14,7 @@
 | `events` | 事件处理（可选） |
 | `closeWhenDeactivate` | 失去焦点时关闭，`"true"` / `"false"` |
 | `autoCloseTime` | 自动关闭秒数，0为不自动 |
-| `activateMode` | `"AutoActivate"` / `"NoActivate"` / `"None"` |
+| `activateMode` | `"NotActivatable"` / `"NotActivatableMouseThrough"` / `"NotActivated"` / `"AutoActivate"` |
 | `winLocation` | 窗口位置：`"Auto"` / `"CenterScreen"` / `"TopRight"` / `"BottomRight"` / `"TopLeft"` / `"BottomLeft"` / `"TopCenter"` / `"BottomCenter"` / `"LastPosition"` / `"FullScreen"` / `"Manual"` / `"Maximized"` 等 |
 | `winSize` | 窗口尺寸，如 `"300,200"` 或 `"50%,50%"` |
 | `stopIfFail` | 失败停止，`"0"` / `"1"` |
@@ -79,7 +79,7 @@ operation=open&data=https://example.com  # 打开网址
 
 ## 辅助 C# 回调
 
-cscode 只支持以下三个回调，不存在 `OnWindowClosing`、`OnWindowClosed` 等其他回调。
+cscode 只支持以下三个回调，不存在 `OnWindowClosing`、`OnWindowClosed` 等其他回调。不需要辅助 C# 时将 `cscode` 设为空字符串；只要填写了 C# 代码，就必须定义 `OnWindowCreated`，即使方法体为空。
 
 cscode 使用 **C# 5.0**，不能写 `$""` 插值、`?.`、表达式体成员等。
 
@@ -303,7 +303,7 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 
 ## 多实例处理
 
-**使用 `sys:customwindow` 必须处理多实例。**
+一般将 `LimitSingleInstance` 设为 `false`。不允许重复打开窗口时，应显式处理多实例；需求明确允许多个窗口时，可省略检测，但不同窗口应使用可区分的 `windowId`。
 
 ### 推荐：网络共享子程序
 

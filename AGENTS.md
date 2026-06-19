@@ -6,7 +6,7 @@
 
 **每次操作前，必须先阅读相关参考文档。不读不动手，不凭记忆写代码。**
 
-用 `read` 工具读取以下文件，获取完整的模块定义、变量类型、设计规则：
+用 `read` 工具读取以下文件，获取常用模块、变量类型和设计规则：
 
 ```
 .claude/skills/quicker-action/references/action-spec.md
@@ -17,14 +17,14 @@
 - **action-spec.md** — 设计原则、CustomWindow 规范、变量类型对照、复查清单（**必读**）
 - **communication-action.md** — 动作的创建/更新/查询/调试（**分析已有动作必读**）
 - **json-structure.md** — 顶层结构、Data、Variables、VarType、步骤、图标、子程序、参数引用
-- **modules.md** — 所有 StepRunnerKey 的 InputParams/OutputParams
+- **modules.md** — 常用 StepRunnerKey 的 InputParams/OutputParams；未收录模块需查官方文档或真实导出动作
 - **form.md** — `sys:form` 的字段类型、输入方式、动态表单JSON、自动计算
 - **customwindow.md** — XAML、cscode 回调、数据映射、进阶用法
 - **webview2.md** — 打开网址、执行 JS、发送消息、Bridge 交互、多标签页
 - **csharp-rules.md** — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL、变量语法、XAML 规则、性能
 - **network-subprograms.md** — 常用网络子程序列表、调用格式、版本管理
 
-示例动作见 `.claude/skills/quicker-action/examples/` 目录。
+示例动作见仓库根目录 `examples/`。
 
 ## 分析/修改已有动作
 
@@ -114,7 +114,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 - 字符拼接：`$="Hello "+{name}`
 - 类型转换：`$=int.Parse({numStr})`
 
-**只有这些才需要 C# 脚本：** Base64 编解码、数组反转、Win32 API、外部 DLL 调用、复杂对象操作
+**需要 C# 脚本的典型场景：** Win32 API、外部 DLL、UI/STA 操作、复杂对象构建，以及表达式或内置模块无法清晰覆盖的复杂流程。Base64、数组反转等如果能用 `$=` 表达式完成，不必升级为独立 C# 步骤。
 
 ## 界面选型规则
 
@@ -152,8 +152,9 @@ B. [选项]
 3. C# 脚本通过 `context.GetVarValue()` / `context.SetVarValue()` 访问变量
 4. 不需要的 OutputParams 设为 `null`
 5. 默认值直接写在变量的 `DefaultValue` 里，无需单独赋值步骤
+   - 词典变量直接写序列化 JSON，例如 `{"key":"value"}`，不要添加 `json:` 前缀
 6. XAML 不要写 `WindowStartupLocation`，窗口位置由 `winLocation` 参数控制
-7. 如果不需要 C# 回调，`cscode` 设为空字符串
+7. 如果不需要 C# 回调，`cscode` 设为空字符串；只要填写了 C# 代码，就必须定义 `OnWindowCreated`
 8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
 9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 action-spec.md 复查清单逐条验证

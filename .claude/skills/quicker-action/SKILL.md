@@ -66,16 +66,17 @@ Choose the lightest implementation that satisfies the requirement:
 
 Use `sys:form` for configuration and ordinary parameter entry. Use `sys:customwindow` only for rich layouts, previews, drag/drop, complex events, or standalone windows. If using CustomWindow, keep related UI data handling in `cscode` instead of splitting simple callbacks into separate `sys:csscript` steps.
 
-Do not use C# when an expression or built-in step is enough. C# is appropriate for Base64 encode/decode, array reversal, Win32 APIs, external DLLs, or complex object construction/manipulation.
+Do not use C# when an expression or built-in step is enough. Use C# when the implementation actually requires platform APIs, external DLLs, UI/STA access, or complex object construction and control flow.
 
 ## JSON Rules
 
 - Keep `Data` as an escaped JSON string.
 - Put default values in variable `DefaultValue`; do not add a separate initialization step unless the value is computed at runtime.
+- For dictionary variables, write `DefaultValue` as direct serialized JSON such as `{"key":"value"}`; do not add a `json:` prefix.
 - Access variables in C# with `context.GetVarValue()` and `context.SetVarValue()`.
 - Set unused `OutputParams` to `null`.
 - Do not write `WindowStartupLocation` in XAML; use the `winLocation` parameter.
-- Set `cscode` to an empty string when no callback code is needed.
+- Set `cscode` to an empty string when no callback code is needed. If it contains C# code, it must define `OnWindowCreated`.
 - Preserve action IDs when updating existing actions.
 
 ## Clarifying Questions

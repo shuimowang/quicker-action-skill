@@ -70,6 +70,8 @@ string UserLimitation                                   // 用户限制
 
 用户点击菜单项时，动作会以参数值运行。在动作中通过 `{quicker_in_param}` 获取传递的参数。
 
+`ContextMenuData` 写在 ActionItem 顶层即可，不要在 `Data` 的 XAction 对象中重复写入。
+
 ### 内置变量
 
 以下变量不在 Variables 列表中，可直接使用：
@@ -85,7 +87,7 @@ string UserLimitation                                   // 用户限制
 
 ```json
 {
-  "LimitSingleInstance": false,  // 始终设为 false，多实例处理在步骤中实现
+  "LimitSingleInstance": false,  // 一般设为 false；需要时在步骤中显式处理窗口多实例
   "SummaryExpression": "$$",
   "SubPrograms": [],
   "Variables": [],
@@ -289,6 +291,8 @@ C# 脚本中读写这些变量时需用对应的 .NET 类型。例如 Bitmap 变
 | 日期时间 | 日期值或天数偏移 | `2019-4-1 12:30:00` |
 | 列表 | 多行，每行一项 | 多行文本 |
 | 词典 | JSON 字符串 | `{"key":"value"}` |
+
+词典变量运行时的类型是 `System.Collections.Generic.Dictionary<string, object>`。Quicker 会将 `DefaultValue` 反序列化为该对象；生成动作 JSON 时统一直接写序列化后的 JSON 字符串，不添加 `json:` 前缀。
 
 一般不要在 DefaultValue 中使用表达式或引用其他变量。
 

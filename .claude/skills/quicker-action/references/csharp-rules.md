@@ -330,7 +330,14 @@ context.SetVarValue("task", task);
 - 普通模式 v1：C# 5.0
 - 普通模式 v2（Roslyn）：C# 7.3
 
-## C# 5.0 禁止使用的语法（cscode 和 csscript 均适用）
+## C# 5.0 禁止使用的语法
+
+本节适用于：
+
+- CustomWindow `cscode`
+- `sys:csscript` v1：`normal`、`low_permission`
+
+不适用于 `sys:csscript` v2：`normal_roslyn`、`low_permission_roslyn`。v2 应按 Roslyn/C# 7.3 语法检查。
 
 | 写法 | 替代方案 |
 |------|----------|
