@@ -10,13 +10,13 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
 ## Core Workflow
 
 1. Classify the request:
-   - Existing action: query it first with `info:<action id or name>`, then read the exported JSON.
-   - New action: design the step flow, variables, and UI, then write a `.json` file.
+   - Existing action: query it first with `info:<action id or name>`, read the exported JSON, preserve its action ID, then use `update` after editing. Never use `create` for an existing action.
+   - New action: design the step flow, variables, and UI, write a `.json` file, validate it, then automatically use `create` to import it into Quicker.
    - Import/update/debug: use the communication action through QuickerStarter.
 2. Load only the references needed for the requested feature. Always load `references/action-spec.md` before generating or changing action JSON.
 3. Use built-in modules first, expressions second, C# only when the feature clearly requires it.
 4. Save generated files as `{action-name}_{yyyyMMdd}.json` in the current workspace unless the user gives another path.
-5. Validate against the checklist in `references/action-spec.md#复查清单` before importing or reporting completion.
+5. Validate against the checklist in `references/action-spec.md#复查清单`, perform the required `create` or `update`, and verify the success response before reporting completion.
 
 ## Quicker Communication
 
@@ -51,7 +51,14 @@ Expected responses:
 | `update` | `更新成功` |
 | `debug` | `调试完成，未报错`, or `调试报错：xxx` |
 
-When analyzing or modifying an existing action, never start from a blank action until `info` confirms the existing action cannot be found.
+### Create vs. Update Decision
+
+- A newly generated action is not complete when the JSON file is merely saved. After validation, run `create` automatically unless the user explicitly asks for file generation only.
+- If an action with the intended name may already exist, run `info` first. Do not create a duplicate unless the user explicitly requests a separate copy.
+- An existing action must follow `info → edit exported JSON → update`. Preserve the queried JSON's `Id`; never call `create`, because that installs a duplicate action.
+- If a modification request returns `未找到动作`, do not silently create a replacement. Report that the target was not found and ask whether to create a new action.
+- Treat success only as the expected communication response: `已安装，动作Id：...` for `create`, or `更新成功` for `update`.
+- If Quicker or the communication action is unavailable, clearly report that the file was generated but not imported or updated.
 
 ## Implementation Rules
 

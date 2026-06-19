@@ -220,6 +220,12 @@ Key, IsLocked, Type, Desc, DefaultValue, SaveState, IsInput, IsOutput, ParamName
 - [ ] OutputParams 的 value 对应的变量已在 Variables 中声明（每写一个 OutputParams 就检查一次）
 - [ ] InputParams 中 `$={varName}` 引用的变量已在 Variables 中声明
 
+### 导入与更新
+- [ ] 新动作校验后已调用 `create`，并收到 `已安装，动作Id：...`
+- [ ] 已有动作通过 `info` 获取原 JSON，保留顶层 `Id`，修改后调用 `update`
+- [ ] 修改已有动作时没有调用 `create`
+- [ ] 通信失败时没有误报“已导入”或“已更新”
+
 ### CustomWindow
 - [ ] `LimitSingleInstance = false`
 - [ ] 不允许重复打开时，有显式多实例处理；允许多窗口时，`windowId` 能区分窗口
