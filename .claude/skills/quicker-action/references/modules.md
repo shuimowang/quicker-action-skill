@@ -436,6 +436,8 @@ If/Else 容器步骤，始终包含 IfSteps 和 ElseSteps 两个分支。
 | 窗口句柄 | `windowHandle` | Show | IntPtr (12) | |
 | 关闭时窗口位置 | `windowLocation` | ShowAndWaitClose | 文本 | |
 
+使用 `GetWindows` 并将 `windowList` 输出到动作变量时，必须先在当前 `Variables` 中声明该变量。生成动作时统一使用 Type 99（任意类型）承接窗口列表；完整变量定义见 [customwindow.md](customwindow.md#手动实现)。
+
 详细用法见 [customwindow.md](customwindow.md)。
 
 ---

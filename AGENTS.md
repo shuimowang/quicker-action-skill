@@ -160,6 +160,8 @@ B. [选项]
 2. 按实现优先级选择方案，优先用内置模块和表达式
 3. C# 脚本通过 `context.GetVarValue()` / `context.SetVarValue()` 访问变量
 4. 不需要的 OutputParams 设为 `null`
+   - 所有非空 OutputParams 目标、VarKey、表达式/插值引用、dataMapping 引用都必须先在当前作用域的 Variables 中声明
+   - CustomWindow 手动使用 GetWindows 时，必须先声明 Type=99 的 `windowList`
 5. 默认值直接写在变量的 `DefaultValue` 里，无需单独赋值步骤
    - 词典变量直接写序列化 JSON，例如 `{"key":"value"}`，不要添加 `json:` 前缀
 6. XAML 不要写 `WindowStartupLocation`，窗口位置由 `winLocation` 参数控制

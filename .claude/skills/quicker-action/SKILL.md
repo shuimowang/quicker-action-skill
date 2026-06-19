@@ -78,6 +78,7 @@ Do not use C# when an expression or built-in step is enough. Use C# when the imp
 ## JSON Rules
 
 - Keep `Data` as an escaped JSON string.
+- Build variables before steps: every non-null `OutputParams` target, non-empty `VarKey`, expression/interpolation reference, and CustomWindow `dataMapping` variable must exist in the current `Variables` scope. When using CustomWindow `GetWindows`, declare `windowList` as Type 99 before adding the steps.
 - Put default values in variable `DefaultValue`; do not add a separate initialization step unless the value is computed at runtime.
 - For dictionary variables, write `DefaultValue` as direct serialized JSON such as `{"key":"value"}`; do not add a `json:` prefix.
 - Access variables in C# with `context.GetVarValue()` and `context.SetVarValue()`.

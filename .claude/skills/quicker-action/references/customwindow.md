@@ -330,6 +330,29 @@ https://helperservice.getquicker.cn/favicon/get/{域名}
 窗口通过 `windowId` 标识查找，GetWindows 和 ShowAndWaitClose 必须使用相同的 `windowId`。
 如果动作只有一个窗口，可以用 `$=_context.ActionId` 作为标识。
 
+**先声明变量，再添加步骤。** 使用下面的 `GetWindows` 示例前，必须在当前动作或子程序的 `Variables` 数组中加入：
+
+```json
+{
+  "Key": "windowList",
+  "IsLocked": false,
+  "Type": 99,
+  "Desc": "已打开的自定义窗口列表",
+  "DefaultValue": "",
+  "SaveState": false,
+  "IsInput": false,
+  "IsOutput": false,
+  "ParamName": "",
+  "InputParamInfo": null,
+  "OutputParamInfo": null,
+  "TableDef": null,
+  "CustomType": null,
+  "Group": "窗口"
+}
+```
+
+如果没有这项声明，`OutputParams.windowList` 无处写入，后面的 `$={windowList}.Any()` 也无法可靠读取。
+
 ```
 步骤1: GetWindows → windowList
 步骤2: If windowList.Any() → 执行策略

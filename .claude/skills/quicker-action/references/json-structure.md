@@ -378,3 +378,5 @@ int DelayMs                                             // 执行后延迟（毫
 - 固定值：`{"VarKey": null, "Value": "值"}`
 - 文本插值：`{"VarKey": null, "Value": "$$你好，{name}"}`
 - 表达式：`{"VarKey": null, "Value": "$=1+2"}`
+
+除内置变量外，`OutputParams` 目标、`VarKey`、文本插值、表达式和 `dataMapping` 中引用的变量，都必须在当前主程序或子程序的 `Variables` 数组中预先声明。
