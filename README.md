@@ -62,11 +62,6 @@ quicker-action-skill/
 │       ├── csharp-rules.md         # C# 规则、命名空间冲突
 │       ├── communication-action.md # 通信动作（创建/更新/查询）
 │       └── network-subprograms.md  # 网络共享子程序
-├── examples/
-│   ├── file_editor.json            # 示例：文件编辑器
-│   ├── image_clipboard_cropper.json # 示例：图片裁剪
-│   ├── demo-text-toolbox.json      # 示例：文本工具箱
-│   └── demo-calculator.json        # 示例：计算器
 └── README.md
 ```
 
