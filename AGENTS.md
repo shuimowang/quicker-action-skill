@@ -29,22 +29,26 @@
 当用户要求"分析"、"查看"、"修改"某个已有动作时，**必须先用通信动作查询**，不要假设要新建。
 
 **流程：**
-1. 用通信动作 `info:动作名或ID` 查询，获取导出的 JSON 文件路径
-2. 读取 JSON 文件，分析现有实现
-3. 如果用户只要求分析或查看，到此给出结论，不修改也不调用 `update`
-4. 如果用户要求修改，基于导出的 JSON 执行修改，保留顶层 `Id`
-5. 修改并校验后自动调用 `update:文件路径`
-6. 只有收到 `更新成功` 才报告修改完成
+1. 先执行通信动作 `ping`，只有收到 `通信动作正常运行` 才能继续
+2. 用通信动作 `info:动作名或ID` 查询，获取导出的 JSON 文件路径
+3. 读取 JSON 文件，分析现有实现
+4. 如果用户只要求分析或查看，到此给出结论，不修改也不调用 `update`
+5. 如果用户要求修改，基于导出的 JSON 执行修改，保留顶层 `Id`
+6. 修改并校验后自动调用 `update:文件路径`
+7. 只有收到 `更新成功` 才报告修改完成
 
 **禁止：** 修改已有动作时调用 `create`。`create` 会再次安装动作并产生重复项。如果 `info` 返回 `未找到动作`，不得擅自新建，应先告知用户并确认。
 
 ### 通信动作
 
 - **动作 ID：** `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
-- **数据交换目录：** `{MyDocuments}\Quicker\kkj.quicker.action\exports\`
+- **数据交换目录：** `%TEMP%\quicker-action\exports\`
 
 **命令格式（PowerShell）：**
 ```powershell
+# 健康检查（每次使用 Skill 时必须首先执行）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 ping`""
+
 # 查询动作信息（按ID或名称，返回JSON文件路径）
 Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 info:动作ID或名称`"" -NoNewWindow -Wait -RedirectStandardOutput "输出文件路径"
 Get-Content "输出文件路径"
@@ -63,6 +67,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 | 场景 | 命令 | 说明 |
 |------|------|------|
+| 检查通信是否可用 | `ping` | 无副作用；每次使用 Skill 时必须首先调用 |
 | 分析/查看已有动作 | `info:动作名或ID` | 导出 JSON 到 exports 目录 |
 | 生成新动作后导入 | `create:文件路径` | 自动分配位置 |
 | 修改已有动作后更新 | `update:文件路径` | 按 JSON 中的 ID 匹配 |
@@ -72,6 +77,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 | 命令 | 返回值 |
 |------|--------|
+| `ping` | `通信动作正常运行` |
 | `info` | JSON文件路径 或 `未找到动作` |
 | `create` | `已安装，动作Id：xxx` |
 | `update` | `更新成功` |
@@ -87,13 +93,14 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 ## 生成新动作
 
 用户描述想要的动作功能时：
-1. **开始前：通读 action-spec.md**
-2. 理解需求，设计动作的步骤流程
-3. 生成符合 Quicker 格式的 JSON
-4. 在 `%TEMP%\quicker-action\<任务标识>\` 中生成并保存 `.json` 工作文件；只有用户明确要求保留文件或指定目标位置时，才复制到临时目录之外
-5. **完成后：按 action-spec.md 复查清单逐条检查**
-6. 校验通过后自动调用通信动作 `create:文件路径` 导入 Quicker
-7. 只有收到 `已安装，动作Id：xxx` 才报告“已创建并导入”
+1. 先执行通信动作 `ping`，只有收到 `通信动作正常运行` 才能继续
+2. **开始前：通读 action-spec.md**
+3. 理解需求，设计动作的步骤流程
+4. 生成符合 Quicker 格式的 JSON
+5. 在 `%TEMP%\quicker-action\<任务标识>\` 中生成并保存 `.json` 工作文件；只有用户明确要求保留文件或指定目标位置时，才复制到临时目录之外
+6. **完成后：按 action-spec.md 复查清单逐条检查**
+7. 校验通过后自动调用通信动作 `create:文件路径` 导入 Quicker
+8. 只有收到 `已安装，动作Id：xxx` 才报告“已创建并导入”
 
 除非用户明确要求“只生成文件、不导入”，否则不能停在 JSON 文件写入阶段。如果 Quicker 或通信动作不可用，应明确说明“文件已生成，但尚未导入”。
 
@@ -176,5 +183,5 @@ B. [选项]
 - 禁止把动作导出 JSON、动作专用代码、分析记录、截图、日志、调试输出或未完成动作放入 Skill 目录。
 - 每项任务使用独立的 `%TEMP%\quicker-action\<任务标识>\` 目录。动作生成、动作分析和动作修改产生的工作文件都必须可安全清理。
 - 分析或修改已有动作时，将 Quicker 导出文件视为只读源文件；先复制到任务临时目录，再从工作副本提取代码或修改。
-- 不自动删除 Quicker 原始导出文件。验证完成后可以清理任务临时目录。
+- `info` 导出属于临时快照。任务完成后可以连同任务临时目录一起清理。
 - 只有经过验证、可跨动作复用的规则才能写入通用文档；不得把中止或半成品动作实现沉淀为规范。

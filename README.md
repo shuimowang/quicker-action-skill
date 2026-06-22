@@ -40,10 +40,11 @@ cp /path/to/quicker-action-skill/AGENTS.md .
 ```
 
 AI 会：
-1. 设计动作的步骤流程
-2. 生成符合 Quicker 格式的 JSON 文件
-3. 在 `%TEMP%\quicker-action\<任务标识>\` 中保存并校验临时工作文件
-4. 默认通过通信动作自动导入 Quicker；修改已有动作时自动更新原动作，不重复安装
+1. 先通过 `ping` 检查 Quicker 通信动作是否正常
+2. 设计动作的步骤流程
+3. 生成符合 Quicker 格式的 JSON 文件
+4. 在 `%TEMP%\quicker-action\<任务标识>\` 中保存并校验临时工作文件
+5. 默认通过通信动作自动导入 Quicker；修改已有动作时自动更新原动作，不重复安装
 
 ## 项目结构
 
