@@ -92,7 +92,7 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 1. **开始前：通读 action-spec.md**
 2. 理解需求，设计动作的步骤流程
 3. 生成符合 Quicker 格式的 JSON
-4. 保存为 `.json` 文件到用户指定的位置（当前工作目录）
+4. 在 `%TEMP%\quicker-action\<任务标识>\` 中生成并保存 `.json` 工作文件；只有用户明确要求保留文件或指定目标位置时，才复制到临时目录之外
 5. **完成后：按 action-spec.md 复查清单逐条检查**
 6. 校验通过后自动调用通信动作 `create:文件路径` 导入 Quicker
 7. 只有收到 `已安装，动作Id：xxx` 才报告“已创建并导入”
@@ -166,8 +166,17 @@ B. [选项]
    - 词典变量直接写序列化 JSON，例如 `{"key":"value"}`，不要添加 `json:` 前缀
 6. XAML 不要写 `WindowStartupLocation`，窗口位置由 `winLocation` 参数控制
 7. 如果不需要 C# 回调，`cscode` 设为空字符串；只要填写了 C# 代码，就必须定义 `OnWindowCreated`
-8. 文件名格式: `{动作名}_{日期}.json`，默认保存到当前工作目录
+8. 文件名格式: `{动作名}_{日期}.json`，默认保存到 `%TEMP%\quicker-action\<任务标识>\`
 9. 涉及配置维护优先考虑 `sys:form`，复杂交互才用 `sys:customwindow`
 10. 生成后必须通过 action-spec.md 复查清单逐条验证
 11. 新动作校验后默认自动 `create`；已有动作修改后必须 `update`，禁止重复 `create`
 12. CustomWindow 是最后一步时优先用 `Show`；只有关闭后需要继续处理、读取关闭结果或维持动作生命周期时才用 `ShowAndWaitClose`
+
+## 临时文件与 Skill 目录规范
+
+- Skill 目录只允许存放可复用的指令、参考文档、脚本和资源文件。
+- 禁止把动作导出 JSON、动作专用代码、分析记录、截图、日志、调试输出或未完成动作放入 Skill 目录。
+- 每项任务使用独立的 `%TEMP%\quicker-action\<任务标识>\` 目录。动作生成、动作分析和动作修改产生的工作文件都必须可安全清理。
+- 分析或修改已有动作时，将 Quicker 导出文件视为只读源文件；先复制到任务临时目录，再从工作副本提取代码或修改。
+- 不自动删除 Quicker 原始导出文件。验证完成后可以清理任务临时目录。
+- 只有经过验证、可跨动作复用的规则才能写入通用文档；不得把中止或半成品动作实现沉淀为规范。
