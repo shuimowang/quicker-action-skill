@@ -15,8 +15,19 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
    - Import/update/debug: use the communication action through QuickerStarter.
 2. Load only the references needed for the requested feature. Always load `references/action-spec.md` before generating or changing action JSON.
 3. Use built-in modules first, expressions second, C# only when the feature clearly requires it.
-4. Save generated files as `{action-name}_{yyyyMMdd}.json` in the current workspace unless the user gives another path.
+4. Create a disposable per-task directory under `%TEMP%\quicker-action\<task-id>\`. Store generated JSON, working copies, extracted code, analysis notes, screenshots, logs, and debug output there unless the user explicitly requests a persistent file.
 5. Validate against the checklist in `references/action-spec.md#复查清单`, perform the required `create` or `update`, and verify the success response before reporting completion.
+
+## Workspace Hygiene
+
+- Keep the skill directory limited to reusable instructions, references, scripts, and assets.
+- Never store exported action JSON, action-specific code, analysis notes, screenshots, logs, debug output, or unfinished action artifacts inside the skill directory.
+- Use `%TEMP%\quicker-action\<task-id>\` as the disposable working directory for each task. Its contents must remain safe to delete after the task.
+- For an existing action, treat the Quicker export as source material. Copy it into the task directory before editing or extracting code; preserve its action ID and update from the working copy.
+- For a new action, generate and validate the JSON in the task directory, then import it with `create`.
+- Keep files outside the temporary directory only when the user explicitly requests a deliverable file or supplies a destination.
+- Do not delete Quicker's source export automatically. Temporary working copies may be removed after a verified `create`, `update`, or completed analysis.
+- Add action-specific knowledge to skill documentation only after verifying it as a reusable rule. Never preserve abandoned or half-finished action implementations as documentation.
 
 ## Quicker Communication
 
