@@ -4,7 +4,7 @@
 
 ## 开始前
 
-**每次操作前，必须先阅读相关参考文档。不读不动手，不凭记忆写代码。**
+**每次操作前，必须先执行通信动作 `ping`。只有收到 `通信动作正常运行` 才能继续。随后阅读相关参考文档，不读不动手，不凭记忆写代码。**
 
 用 `read` 工具读取以下文件，获取常用模块、变量类型和设计规则：
 
@@ -23,6 +23,7 @@
 - **webview2.md** — 打开网址、执行 JS、发送消息、Bridge 交互、多标签页
 - **csharp-rules.md** — 命名空间冲突、IStepContext、线程选择、语法限制、内置 DLL、变量语法、XAML 规则、性能
 - **network-subprograms.md** — 常用网络子程序列表、调用格式、版本管理
+- **share-description.md** — 动作分享页图文简介、Summernote 0.8.20 HTML 输出规则
 
 ## 分析/修改已有动作
 
@@ -103,6 +104,16 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 8. 只有收到 `已安装，动作Id：xxx` 才报告“已创建并导入”
 
 除非用户明确要求“只生成文件、不导入”，否则不能停在 JSON 文件写入阶段。如果 Quicker 或通信动作不可用，应明确说明“文件已生成，但尚未导入”。
+
+## 生成动作分享页图文简介
+
+当用户要求生成动作介绍、图文简介、分享页文案或 Summernote HTML 时：
+
+1. 读取 `.claude/skills/quicker-action/references/share-description.md`
+2. 用户只提供粗糙介绍时，仅提炼该内容，不补写未提及的功能
+3. 用户提供动作名称或 ID 时，先通过 `info` 读取真实动作，再结合用户内容提炼
+4. 最终只输出适配 Summernote 0.8.20 的正文 HTML 片段
+5. 不输出 Markdown、代码块、解释或完整网页标签
 
 ## 实现优先级（严格遵守）
 

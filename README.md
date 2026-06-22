@@ -46,6 +46,9 @@ AI 会：
 4. 在 `%TEMP%\quicker-action\<任务标识>\` 中保存并校验临时工作文件
 5. 默认通过通信动作自动导入 Quicker；修改已有动作时自动更新原动作，不重复安装
 
+也可以让 AI 根据粗略说明或真实动作内容，生成适合 Quicker 动作分享页、
+可直接粘贴到 Summernote 0.8.20 的精简 HTML 图文简介。
+
 ## 项目结构
 
 ```
@@ -62,7 +65,8 @@ quicker-action-skill/
 │       ├── webview2.md             # WebView2 浏览器窗口
 │       ├── csharp-rules.md         # C# 规则、命名空间冲突
 │       ├── communication-action.md # 通信动作（创建/更新/查询）
-│       └── network-subprograms.md  # 网络共享子程序
+│       ├── network-subprograms.md  # 网络共享子程序
+│       └── share-description.md    # 分享页图文简介
 └── README.md
 ```
 

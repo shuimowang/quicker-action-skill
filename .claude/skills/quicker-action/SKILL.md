@@ -1,6 +1,6 @@
 ---
 name: quicker-action
-description: Generate, inspect, import, debug, and modify Quicker action JSON files on Windows. Use when Codex needs to build Quicker combined actions, query or update existing Quicker actions through QuickerStarter, design steps, variables, subprograms, sys:form forms, sys:customwindow XAML/C# windows, WebView2 windows, or C# script modules.
+description: Generate, inspect, import, debug, and modify Quicker action JSON files on Windows, and create Summernote-compatible rich-text descriptions for Quicker action sharing pages. Use when Codex needs to build or analyze Quicker actions, query or update actions through QuickerStarter, or prepare concise action-library introductions.
 ---
 
 # Quicker Action
@@ -9,11 +9,12 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
 
 ## Core Workflow
 
-1. Run `ping` before any other Quicker operation and require the exact response `通信动作正常运行`. If it fails, stop and report that the communication action is unavailable.
+1. Run `ping` before doing any task with this skill and require the exact response `通信动作正常运行`. If it fails, stop and report that the communication action is unavailable.
 2. Classify the request:
    - Existing action: query it first with `info:<action id or name>`, read the exported JSON, preserve its action ID, then use `update` after editing. Never use `create` for an existing action.
    - New action: design the step flow, variables, and UI, write a `.json` file, validate it, then automatically use `create` to import it into Quicker.
    - Import/update/debug: use the communication action through QuickerStarter.
+   - Share-page description: read `references/share-description.md`; use the user's source text, and query the action first when a name or ID is supplied.
 3. Load only the references needed for the requested feature. Always load `references/action-spec.md` before generating or changing action JSON.
 4. Use built-in modules first, expressions second, C# only when the feature clearly requires it.
 5. Create a disposable per-task directory under `%TEMP%\quicker-action\<task-id>\`. Store generated JSON, working copies, extracted code, analysis notes, screenshots, logs, and debug output there unless the user explicitly requests a persistent file.
@@ -78,6 +79,15 @@ Expected responses:
 - Treat success only as the expected communication response: `已安装，动作Id：...` for `create`, or `更新成功` for `update`.
 - If Quicker or the communication action is unavailable, clearly report that the file was generated but not imported or updated.
 
+## Share-Page Description
+
+When the user asks for an action introduction, illustrated description, sharing-page copy, or Summernote HTML:
+
+1. Read `references/share-description.md`.
+2. Use only the user's source material unless an action name or ID is supplied.
+3. If an action name or ID is supplied, query and inspect the real action before writing.
+4. Return only the final Summernote 0.8.20 body HTML fragment, with no explanation or Markdown.
+
 ## Implementation Rules
 
 Choose the lightest implementation that satisfies the requirement:
@@ -129,3 +139,4 @@ B. [option]
 - `references/webview2.md`: WebView2 URL loading, JavaScript execution, Bridge messages, and tabs.
 - `references/csharp-rules.md`: C# namespaces, `IStepContext`, threading, syntax limits, built-in DLLs, variable syntax, XAML rules, and performance.
 - `references/network-subprograms.md`: shared network subprogram list, invocation format, and versioning.
+- `references/share-description.md`: Summernote-compatible action sharing-page introductions and HTML output rules.
