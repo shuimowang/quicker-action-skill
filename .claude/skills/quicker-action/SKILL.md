@@ -9,14 +9,15 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
 
 ## Core Workflow
 
-1. Classify the request:
+1. Run `ping` before any other Quicker operation and require the exact response `通信动作正常运行`. If it fails, stop and report that the communication action is unavailable.
+2. Classify the request:
    - Existing action: query it first with `info:<action id or name>`, read the exported JSON, preserve its action ID, then use `update` after editing. Never use `create` for an existing action.
    - New action: design the step flow, variables, and UI, write a `.json` file, validate it, then automatically use `create` to import it into Quicker.
    - Import/update/debug: use the communication action through QuickerStarter.
-2. Load only the references needed for the requested feature. Always load `references/action-spec.md` before generating or changing action JSON.
-3. Use built-in modules first, expressions second, C# only when the feature clearly requires it.
-4. Create a disposable per-task directory under `%TEMP%\quicker-action\<task-id>\`. Store generated JSON, working copies, extracted code, analysis notes, screenshots, logs, and debug output there unless the user explicitly requests a persistent file.
-5. Validate against the checklist in `references/action-spec.md#复查清单`, perform the required `create` or `update`, and verify the success response before reporting completion.
+3. Load only the references needed for the requested feature. Always load `references/action-spec.md` before generating or changing action JSON.
+4. Use built-in modules first, expressions second, C# only when the feature clearly requires it.
+5. Create a disposable per-task directory under `%TEMP%\quicker-action\<task-id>\`. Store generated JSON, working copies, extracted code, analysis notes, screenshots, logs, and debug output there unless the user explicitly requests a persistent file.
+6. Validate against the checklist in `references/action-spec.md#复查清单`, perform the required `create` or `update`, and verify the success response before reporting completion.
 
 ## Workspace Hygiene
 
@@ -26,7 +27,7 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
 - For an existing action, treat the Quicker export as source material. Copy it into the task directory before editing or extracting code; preserve its action ID and update from the working copy.
 - For a new action, generate and validate the JSON in the task directory, then import it with `create`.
 - Keep files outside the temporary directory only when the user explicitly requests a deliverable file or supplies a destination.
-- Do not delete Quicker's source export automatically. Temporary working copies may be removed after a verified `create`, `update`, or completed analysis.
+- Treat `info` exports as disposable source snapshots. Keep them during the task, then remove them after a verified `create`, `update`, or completed analysis.
 - Add action-specific knowledge to skill documentation only after verifying it as a reusable rule. Never preserve abandoned or half-finished action implementations as documentation.
 
 ## Quicker Communication
@@ -34,12 +35,17 @@ Create, analyze, and update Quicker combined-action JSON files. Prefer practical
 Use the installed communication action to query, create, update, or debug Quicker actions.
 
 - Communication action ID: `3c7892bf-ef2f-41af-b63f-7cd5f4fda288`
-- Export directory: `{MyDocuments}\Quicker\kkj.quicker.action\exports\`
+- Export directory: `%TEMP%\quicker-action\exports\`
 - Default QuickerStarter path: `C:\Program Files\Quicker\QuickerStarter.exe`
 
 Prefer the bundled helper script because it handles stdout redirection and quoting:
 
+The helper applies a 10-second timeout and automatically runs `ping` before
+`info`, `create`, `update`, and `debug`. Override the timeout with
+`--timeout <seconds>` or the `QUICKER_TIMEOUT` environment variable.
+
 ```powershell
+python "<skill-dir>\scripts\quicker_comm.py" ping
 python "<skill-dir>\scripts\quicker_comm.py" info "动作名或ID"
 python "<skill-dir>\scripts\quicker_comm.py" create "D:\path\action.json"
 python "<skill-dir>\scripts\quicker_comm.py" update "D:\path\action.json"
@@ -57,6 +63,7 @@ Expected responses:
 
 | Command | Success response |
 | --- | --- |
+| `ping` | `通信动作正常运行` |
 | `info` | JSON file path, or `未找到动作` |
 | `create` | `已安装，动作Id：xxx` |
 | `update` | `更新成功` |

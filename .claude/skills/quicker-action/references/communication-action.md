@@ -10,16 +10,22 @@
 ## 数据交换目录
 
 ```
-{MyDocuments}\Quicker\kkj.quicker.action\
-└── exports\          ← info 命令导出的 JSON 存放于此
+%TEMP%\quicker-action\
+└── exports\          ← info 命令导出的临时 JSON 快照存放于此
 ```
 
-- `{MyDocuments}` = `Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)`
+- `%TEMP%` = `Path.GetTempPath()`
 - 通信动作自动管理此目录（不存在会自动创建）
-- `info:` 命令导出动作到 `exports/动作名_ID.json`
+- `info:` 命令使用安全且唯一的文件名，避免同名动作或并发查询互相覆盖
+- 导出文件属于可清理的临时快照，任务完成后可以删除
 - `create:` / `update:` 从指定路径读取 JSON（不限于此目录）
 
 ## 默认完成标准
+
+每次使用 quicker-action Skill 时，必须先执行 `ping`。只有收到精确返回值
+`通信动作正常运行` 才能继续任何查询、创建、更新或调试操作；否则停止并报告通信不可用。
+随 Skill 提供的 `quicker_comm.py` 会在非 `ping` 命令前自动执行健康检查，
+并默认应用 10 秒超时。可通过 `--timeout 秒数` 或环境变量 `QUICKER_TIMEOUT` 调整。
 
 生成或修改动作时，保存 JSON 文件只是中间步骤，不是完成：
 
@@ -64,6 +70,9 @@
 ## 命令格式
 
 ```powershell
+# 健康检查（每次使用 Skill 时必须首先执行）
+Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 ping`""
+
 # 创建新动作（自动分配位置，返回新动作ID）
 Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 create:文件路径`""
 
@@ -76,29 +85,27 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 # 调试运行动作
 Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 debug:动作ID或名称`""
 
-# 删除动作
-Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"runaction:3c7892bf-ef2f-41af-b63f-7cd5f4fda288 delete:动作ID`""
 ```
 
 ## 返回值（通过 -c 获取 stdout）
 
 | 命令 | 返回值 |
 |------|--------|
+| `ping` | `通信动作正常运行` |
 | `create` | `已安装，动作Id：xxx` |
 | `update` | `更新成功` |
 | `info` | JSON文件路径 或 `未找到动作` |
 | `debug` | `调试完成，未报错` 或 `调试报错：xxx` |
-| `delete` | `OK` 或 错误信息 |
 
 ## 使用场景
 
 | 场景 | 命令 | 说明 |
 |------|------|------|
+| 检查通信是否可用 | `ping` | 无副作用；每次使用 Skill 时必须首先调用 |
 | 生成新动作后导入 | `create:文件路径` | 自动分配位置 |
 | 修改已有动作后更新 | `update:文件路径` | 按 JSON 中的 ID 匹配 |
 | 分析/查看已有动作 | `info:动作名或ID` | 导出 JSON 到 exports 目录 |
 | 测试动作是否正常 | `debug:动作名或ID` | 运行动作并检查报错 |
-| 删除动作 | `delete:动作ID` | 删除指定动作，不可逆 |
 
 ## 执行后验证
 
@@ -121,9 +128,8 @@ Start-Process "C:\Program Files\Quicker\QuickerStarter.exe" -ArgumentList "-c `"
 
 - PowerShell 中使用 `-c` 参数获取 stdout（`-Command` 的缩写）
 - 路径含空格时需要用引号包裹
-- `info` 命令支持按名称模糊匹配
-- 导出的 JSON 文件名格式：`动作名_ID.json`
-- `delete` 命令需要动作 ID，删除操作不可逆，请谨慎使用
+- `info` 命令支持按 ID 查询，或按名称进行忽略大小写的完全匹配
+- 导出的 JSON 文件名格式：`动作名_ID_UTC时间_随机后缀.json`
 
 ## 外部文档
 
